@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-db
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-db
+  template:
+    metadata:
+      labels:
+        app: api-db
+    spec:
+      containers:
+        - name: postgres-resource-server
+          imagePullPolicy: "IfNotPresent"
+          image: postgres:9.6
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: api-db-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-db-config
+  namespace: api
+  labels:
+    app: api-db
+data:
+  POSTGRES_DB: tabeldata_resource_server
+  POSTGRES_USER: tabeldata_resource_server
+  POSTGRES_PASSWORD: tabeldata_resource_server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-db-service
+  namespace: api
+spec:
+  selector:
+    app: api-db
+  ports:
+    - port: 5432
+      targetPort: 5432
