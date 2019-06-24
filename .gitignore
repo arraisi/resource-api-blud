@@ -1,5 +1,6 @@
 ### systemfiles
 .DS_Store
+*.log
 
 ### Maven template
 target/

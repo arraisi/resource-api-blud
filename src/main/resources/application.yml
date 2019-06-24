@@ -1,5 +1,7 @@
 server:
   port: ${APPLICATION_PORT:9090}
+  servlet:
+    context-path: /@project.artifactId@
 # spring configuration
 spring:
   application:
@@ -47,3 +49,8 @@ spring:
       content-type: text/html
     check-template-location: true
     template-resolver-order: 0
+logging:
+  level:
+    org.springframework: ERROR
+    com.tabeldata: DEBUG
+  file: ${spring.application.name}.log
