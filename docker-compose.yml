@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_PASSWORD=tabeldata_resource_server
+      - POSTGRES_USER=tabeldata_resource_server
+      - POSTGRES_DB=tabeldata_resource_server
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tabeldata_resource_server
+  springboot:
+    image: tabeldata-oauth2-resource-server:1.0.2-release
+    environment:
+      - APPLICATION_PORT=9090
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=tabeldata_resource_server
+      - DATABASE_USER=tabeldata_resource_server
+      - DATABASE_PASSWORD=tabeldata_resource_server
+    ports:
+      - 9090:9090
+    entrypoint:
+      - "java"
+      - '-jar'
+      - "-Djava.security.egd=file:/dev/./urandom"
+      - "/var/applications/application.jar"
+    networks:
+      - tabeldata_resource_server
+    depends_on:
+      - postgres
+volumes:
+  postgres_data:
+networks:
+  tabeldata_resource_server:
