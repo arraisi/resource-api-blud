@@ -25,6 +25,13 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>repository.tabeldata.com</id>
+            <url>http://tabeldata.ip-dynamic.com:8081/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -207,13 +214,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>repository.tabeldata.com</id>
-            <url>http://tabeldata.ip-dynamic.com:8081/repository/maven-releases/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <finalName>${finalName}</finalName>
