@@ -13,7 +13,7 @@ services:
     networks:
       - tabeldata_resource_server
   springboot:
-    image: tabeldata-oauth2-resource-server:1.0.2-release
+    image: tabeldata-oauth2-resource-server:1.0.3-release
     environment:
       - APPLICATION_PORT=9090
       - DATABASE_HOST=postgres
