@@ -1,5 +1,6 @@
 # `v1.0.3-release`
 
+- update `server.servlet.context-path=${project.artifactId}`
 - docker build to maven phase install
 - docker tags, push to maven phase deploy
 - publish deploy to nexus repository
