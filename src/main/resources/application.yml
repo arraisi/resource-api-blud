@@ -11,9 +11,9 @@ spring:
   mvc:
     dispatch-options-request: true
   datasource:
-    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:tabeldata_resource_server}
-    username: ${DATABASE_USER:tabeldata_resource_server}
-    password: ${DATABASE_PASSWORD:tabeldata_resource_server}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:blud_data}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
   jpa:
     generate-ddl: false
     hibernate:

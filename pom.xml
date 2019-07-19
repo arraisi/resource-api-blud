@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tabeldata</groupId>
-    <artifactId>tabeldata-oauth2-resource-server</artifactId>
+    <artifactId>blud-resource-server</artifactId>
     <version>1.0.3-release</version>
     <packaging>jar</packaging>
 
-    <name>Tabeldata Oauth2 Resource Server</name>
-    <description>Resource server</description>
+    <name>BLUD Resource Server</name>
+    <description>RBA BLUD Resource Server</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
