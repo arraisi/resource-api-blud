@@ -20,7 +20,7 @@ public class KasService {
     }
 
     @Transactional
-    public void save(TmrKasEntity tmr)  {
+    public void save(List<TmrKasEntity> tmr)  {
         dao.save(tmr);
     }
 
