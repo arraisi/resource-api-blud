@@ -11,9 +11,9 @@ spring:
   mvc:
     dispatch-options-request: true
   datasource:
-    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:blud_data}
-    username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: jdbc:oracle:thin:@${DATABASE_HOST:tabeldata.ip-dynamic.com}:${DATABASE_PORT:1521}:${DATABASE_SID:xe}
+    username: ${DATABASE_USER:blud}
+    password: ${DATABASE_PASSWORD:blud}
   jpa:
     generate-ddl: false
     hibernate:
@@ -30,7 +30,7 @@ spring:
           use_jdbc_metadata_defaults: false
   flyway:
     encoding: UTF-8
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     check-location: true
     locations: classpath:/db/migration/postgresql
