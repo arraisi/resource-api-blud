@@ -1,6 +1,6 @@
 package com.tabeldata.controller;
 
-import com.tabeldata.entity.LoadDpt;
+import com.tabeldata.entity.LoadDptEntity;
 import com.tabeldata.service.LoadDptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,10 @@ public class LoadDptController {
     private LoadDptService service;
 
     @GetMapping("/load")
-    public ResponseEntity<List<LoadDpt>> getLoadPendapatan(
+    public ResponseEntity<List<LoadDptEntity>> getLoadPendapatan(
             @RequestParam String tahunAnggaran,
             @RequestParam String skpdId) {
-        List<LoadDpt> value = service.getLoadPendapatan(tahunAnggaran, skpdId);
+        List<LoadDptEntity> value = service.getLoadPendapatan(tahunAnggaran, skpdId);
         if (!value.isEmpty()) {
             return new ResponseEntity<>(value, HttpStatus.OK);
         } else {

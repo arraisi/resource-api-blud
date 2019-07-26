@@ -1,6 +1,6 @@
 package com.tabeldata.dao;
 
-import com.tabeldata.entity.LoadDpt;
+import com.tabeldata.entity.LoadDptEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,17 +18,17 @@ public class LoadDptDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
-    public List<LoadDpt> getLoadPendapatan(String tahunAnggaran, String skpdId) {
-        String sql = "SELECT NVL(xxx.i_id, -1)          id_trx\n" +
-                "     , tmrba.c_angg_tahun\n" +
-                "     , tmrba.i_idskpd\n" +
-                "     , trrbaskpd.c_skpd\n" +
-                "     , trrbaskpd.n_skpd\n" +
-                "     , trbas.i_id              AS i_idbas\n" +
-                "     , c_akun\n" +
-                "     , n_akun\n" +
-                "     , NVL(xxx.v_angg_dpa, 0)  AS v_angg_dpa\n" +
-                "     , NVL(xxx.v_angg_tapd, 0) AS v_angg_tapd\n" +
+    public List<LoadDptEntity> getLoadPendapatan(String tahunAnggaran, String skpdId) {
+        String sql = "SELECT NVL(xxx.i_id, -1)          idTrx\n" +
+                "     , tmrba.c_angg_tahun      AS tahunAnggaran\n" +
+                "     , tmrba.i_idskpd          AS idSkpd\n" +
+                "     , trrbaskpd.c_skpd        AS skpd\n" +
+                "     , trrbaskpd.n_skpd        AS namaSkpd\n" +
+                "     , trbas.i_id              AS idBas\n" +
+                "     , c_akun                  AS kodeAkun\n" +
+                "     , n_akun                  AS namaAkun\n" +
+                "     , NVL(xxx.v_angg_dpa, 0)  AS anggaranDpa\n" +
+                "     , NVL(xxx.v_angg_tapd, 0) AS anggaranTapd\n" +
                 "FROM tmrba\n" +
                 "         INNER JOIN trrbaskpd ON tmrba.i_idskpd = trrbaskpd.i_id\n" +
                 "         INNER JOIN trrbaskpdbas ON trrbaskpd.i_id = trrbaskpdbas.i_idskpd\n" +
@@ -46,18 +46,18 @@ public class LoadDptDao {
         param.put("vidskpd", skpdId);
 
         return this.namedParameterJdbcTemplate.query(sql, param, (resultSet, i) -> {
-            LoadDpt loadDpt = new LoadDpt();
-            loadDpt.setIdTrx(resultSet.getInt("id_trx"));
-            loadDpt.setTahunAnggaran(resultSet.getString("c_angg_tahun"));
-            loadDpt.setIdSkpd(resultSet.getInt("i_idskpd"));
-            loadDpt.setSkpd(resultSet.getString("c_skpd"));
-            loadDpt.setNamaSkpd(resultSet.getString("n_skpd"));
-            loadDpt.setIdBas(resultSet.getInt("i_idbas"));
-            loadDpt.setKodeAkun(resultSet.getString("c_akun"));
-            loadDpt.setNamaAkun(resultSet.getString("n_akun"));
-            loadDpt.setAnggaranDpa(resultSet.getDouble("v_angg_dpa"));
-            loadDpt.setAnggaranTapd(resultSet.getDouble("v_angg_tapd"));
-            return loadDpt;
+            LoadDptEntity loadDptEntity = new LoadDptEntity();
+            loadDptEntity.setIdTrx(resultSet.getInt("idTrx"));
+            loadDptEntity.setTahunAnggaran(resultSet.getString("tahunAnggaran"));
+            loadDptEntity.setIdSkpd(resultSet.getInt("idSkpd"));
+            loadDptEntity.setSkpd(resultSet.getString("skpd"));
+            loadDptEntity.setNamaSkpd(resultSet.getString("namaSkpd"));
+            loadDptEntity.setIdBas(resultSet.getInt("idBas"));
+            loadDptEntity.setKodeAkun(resultSet.getString("kodeAkun"));
+            loadDptEntity.setNamaAkun(resultSet.getString("namaAkun"));
+            loadDptEntity.setAnggaranDpa(resultSet.getDouble("anggaranDpa"));
+            loadDptEntity.setAnggaranTapd(resultSet.getDouble("anggaranTapd"));
+            return loadDptEntity;
         });
     }
 
