@@ -2,6 +2,7 @@ package com.tabeldata.dao;
 
 import com.tabeldata.entity.KasEntity;
 import com.tabeldata.entity.TmrKasEntity;
+import com.tabeldata.entity.TrrbaNoMax;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -51,7 +54,7 @@ public class KasDao {
                         "WHERE \n" +
                         "  \ttrbas.c_akun BETWEEN '1' AND '1.9' \n" +
                         "     AND tmrba.c_angg_tahun = '2020'\n" +
-                        "     AND tmrba.i_idskpd = '12884' \n" +
+                        "     AND tmrba.i_idskpd = '12810' \n" +
                         "ORDER BY \n" +
                         "\ttmrba.c_angg_tahun,  trrbaskpd.c_skpd, C_AKUN";
 
@@ -85,7 +88,7 @@ public class KasDao {
 
 
         for (TmrKasEntity val: value) {
-            if(val.getIdTmrbakasBlud() == null){
+            if(val.getIdTmrbakasBlud() == -1){
 
                 String insertQuery = "INSERT INTO TMRBAKASBLUD " +
                         "(I_ID," +
@@ -93,23 +96,21 @@ public class KasDao {
                         "C_ANGG_TAHUN," +
                         "I_IDBAS," +
                         "V_KAS," +
-                        "V_KAS_AUDITED," +
-                        "D_PGUN_REKAM)" +
+                        "V_KAS_AUDITED)" +
                         "VALUES (" +
-                        ":iid," +
-                        ":iidSkpd," +
-                        ":canggTahun," +
-                        ":iidBas," +
+                        ":iId," +
+                        ":iIdSkpd," +
+                        ":cAnggTahun," +
+                        ":iIdBas," +
                         ":vkas," +
-                        ":vkasAudited," +
-                        ":dPgunRekam)";
-
-                List<KasEntity> listID = new ArrayList<>();
+                        ":vkasAudited)";
 
                 String getID = " SELECT MAX(I_IDMAX) + 1 iid  FROM TRRBANOMAX WHERE N_TABEL = :N_TABEL ";
                 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
                 mapSqlParameterSource.addValue("N_TABEL", "TMRBAKASBLUD");
-                System.out.println(getID);
+
+                System.out.println("GET ID FROM TRRBANOMAX"+getID);
+
                 Integer getI_ID = jdbcTemplate.queryForObject(getID, mapSqlParameterSource, new RowMapper<Integer>() {
                     @Override
                     public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -117,32 +118,41 @@ public class KasDao {
                     }
                 });
 
-                KasEntity kasEntity = new KasEntity();
+//                KasEntity datakas = new KasEntity();
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("iId",getI_ID);
+                paramMap.put("iIdSkpd", val.getIidSkpd());
+                paramMap.put("cAnggTahun", val.getCanggTahun());
+                paramMap.put("iIdBas", val.getIid());
+                paramMap.put("vkas", val.getVkas());
+                paramMap.put("vkasAudited", val.getVkasAudited());
+//                paramMap.put("dPgunRekam", Date.valueOf(LocalDate.now()));
 
-                kasEntity.setIId(getI_ID);
-                kasEntity.setIIdSkpd(val.getIidSkpd());
-                kasEntity.setCAnggTahun(val.getCanggTahun());
-                kasEntity.setIIdBas(val.getIid());
-                kasEntity.setVkas(val.getVkas());
-                kasEntity.setVkasAudited(val.getVkasAudited());
-                kasEntity.setDPgunRekam(Date.valueOf(LocalDate.now()));
+                this.jdbcTemplate.update(insertQuery,paramMap);
 
-                listID.add(kasEntity);
+                TrrbaNoMax trrbaNoMax = new TrrbaNoMax();
 
-                SqlParameterSource[] sqlinsert = SqlParameterSourceUtils.createBatch(listID);
+                String queryBuilder = "UPDATE TRRBANOMAX\n" +
+                "SET I_IDMAX = :iIdMax\n" +
+                "WHERE N_TABEL = :nTabel";
 
-                this.jdbcTemplate.batchUpdate(insertQuery,sqlinsert);
+                Map<String, Object> updateId = new HashMap<>();
+
+                updateId.put("iIdMax", getI_ID);
+                updateId.put("nTabel", "TMRBAKASBLUD");
+
+                this.jdbcTemplate.update(queryBuilder, updateId);
             }
         }
 
 
-        SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
-        String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
-                "SET V_KAS = :vkas,\n" +
-                "    V_KAS_AUDITED = :vkasAudited,\n" +
-                "WHERE I_ID = :iid";
-
-
-        this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
+//        SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
+//        String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
+//                "SET V_KAS = :vkas,\n" +
+//                "    V_KAS_AUDITED = :vkasAudited\n" +
+//                "WHERE I_ID = :iid";
+//
+//
+//        this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
 }
