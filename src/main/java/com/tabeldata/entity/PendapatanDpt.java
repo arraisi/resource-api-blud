@@ -33,4 +33,5 @@ public class PendapatanDpt {
     private Date tanggalRekamPengguna;
     private Integer idUbahPengguna;
     private Date tanggalUbahPengguna;
+    private String jenis;
 }
