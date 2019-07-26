@@ -12,25 +12,25 @@ import java.sql.Date;
 @NoArgsConstructor
 public class KasEntity {
     // default model entity
-    private Integer I_ID; //Interger
+    private Integer iId; //Interger
 
-    private Integer I_IDSKPD;
+    private Integer iIdSkpd;
 
-    private String C_ANGG_TAHUN; //Char
+    private String cAnggTahun; //Char
 
-    private Integer I_IDBAS;
+    private Integer iIdBas;
 
-    private BigDecimal V_KAS; // BigDecimal
+    private BigDecimal vkas; // BigDecimal
 
-    private BigDecimal V_KAS_AUDITED;
+    private BigDecimal vkasAudited;
 
-    private Integer I_PGUN_REKAM;
+    private Integer iPgunRekan;
 
-    private Date D_PGUN_REKAM;
+    private Date dPgunRekam;
 
-    private Integer I_PGUN_UBAH;
+    private Integer iPgunUbah;
 
-    private Date D_PGUN_UBAH;
+    private Date dPgunUbah;
 
 
 }

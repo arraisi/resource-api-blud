@@ -1,17 +1,23 @@
 package com.tabeldata.dao;
 
+import com.tabeldata.entity.KasEntity;
 import com.tabeldata.entity.TmrKasEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
 
 @Slf4j
 @Repository
@@ -23,16 +29,16 @@ public class KasDao {
     public List<TmrKasEntity> findAll() {
         String baseQuery =
                 "SELECT \n" +
-                        "\tnvl(tmrbakasblud.i_id,-1) id_tmrbakasblud \n" +
-                        "  \t,tmrba.c_angg_tahun\n" +
-                        "  \t,tmrba.i_idskpd\n" +
-                        "  \t,trrbaskpd.c_skpd\n" +
-                        "  \t,trrbaskpd.n_skpd\n" +
-                        "  \t,trbas.i_id\n" +
-                        "  \t,c_akun\n" +
-                        "  \t,n_akun\n" +
-                        "  \t,nvl(tmrbakasblud.v_kas,0) AS v_kas\n" +
-                        "  \t,nvl(tmrbakasblud.v_kas_audited,0) AS v_kas_audited\t\n" +
+                        "\tnvl(tmrbakasblud.i_id,-1) idTmrbakasBlud \n" +
+                        "  \t,tmrba.c_angg_tahun  canggTahun\n" +
+                        "  \t,tmrba.i_idskpd  iidSkpd\n" +
+                        "  \t,trrbaskpd.c_skpd  cskpd\n" +
+                        "  \t,trrbaskpd.n_skpd  nskpd\n" +
+                        "  \t,trbas.i_id  iid\n" +
+                        "  \t,c_akun  cakun\n" +
+                        "  \t,n_akun  nakun\n" +
+                        "  \t,nvl(tmrbakasblud.v_kas,0) vkas\n" +
+                        "  \t,nvl(tmrbakasblud.v_kas_audited,0) vkasAudited\t\n" +
                         "FROM  \n" +
                         "\ttmrba \n" +
                         "  \tINNER JOIN trrbaskpd ON tmrba.i_idskpd = trrbaskpd.i_id\n" +
@@ -56,16 +62,16 @@ public class KasDao {
             @Override
             public TmrKasEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TmrKasEntity tmrKasEntity = new TmrKasEntity();
-                tmrKasEntity.setI_ID(rs.getInt("id_tmrbakasblud"));
-                tmrKasEntity.setC_ANGG_TAHUN(rs.getString("C_ANGG_TAHUN"));
-                tmrKasEntity.setI_IDSKPD(rs.getInt("I_IDSKPD"));
-                tmrKasEntity.setC_SKPD(rs.getString("C_SKPD"));
-                tmrKasEntity.setN_SKPD(rs.getString("N_SKPD"));
-                tmrKasEntity.setI_ID(rs.getInt("I_ID"));
-                tmrKasEntity.setC_AKUN(rs.getString("C_AKUN"));
-                tmrKasEntity.setN_AKUN(rs.getString("N_AKUN"));
-                tmrKasEntity.setV_KAS(rs.getBigDecimal("V_KAS"));
-                tmrKasEntity.setV_KAS_AUDITED(rs.getBigDecimal("V_KAS_AUDITED"));
+                tmrKasEntity.setIdTmrbakasBlud(rs.getInt("idTmrbakasBlud"));
+                tmrKasEntity.setCanggTahun(rs.getString("canggTahun"));
+                tmrKasEntity.setIidSkpd(rs.getInt("iidSkpd"));
+                tmrKasEntity.setCskpd(rs.getString("cskpd"));
+                tmrKasEntity.setNskpd(rs.getString("nskpd"));
+                tmrKasEntity.setIid(rs.getInt("iid"));
+                tmrKasEntity.setCakun(rs.getString("cakun"));
+                tmrKasEntity.setNakun(rs.getString("nakun"));
+                tmrKasEntity.setVkas(rs.getBigDecimal("vkas"));
+                tmrKasEntity.setVkasAudited(rs.getBigDecimal("vkasAudited"));
                 return tmrKasEntity;
             }
         });
@@ -74,13 +80,68 @@ public class KasDao {
 
 
     public void save(List<TmrKasEntity> value) {
+        System.out.println(value);
+
+
+
+        for (TmrKasEntity val: value) {
+            if(val.getIdTmrbakasBlud() == null){
+
+                String insertQuery = "INSERT INTO TMRBAKASBLUD " +
+                        "(I_ID," +
+                        "I_IDSKPD," +
+                        "C_ANGG_TAHUN," +
+                        "I_IDBAS," +
+                        "V_KAS," +
+                        "V_KAS_AUDITED," +
+                        "D_PGUN_REKAM)" +
+                        "VALUES (" +
+                        ":iid," +
+                        ":iidSkpd," +
+                        ":canggTahun," +
+                        ":iidBas," +
+                        ":vkas," +
+                        ":vkasAudited," +
+                        ":dPgunRekam)";
+
+                List<KasEntity> listID = new ArrayList<>();
+
+                String getID = " SELECT MAX(I_IDMAX) + 1 iid  FROM TRRBANOMAX WHERE N_TABEL = :N_TABEL ";
+                MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+                mapSqlParameterSource.addValue("N_TABEL", "TMRBAKASBLUD");
+                System.out.println(getID);
+                Integer getI_ID = jdbcTemplate.queryForObject(getID, mapSqlParameterSource, new RowMapper<Integer>() {
+                    @Override
+                    public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
+                        return resultSet.getInt("iid");
+                    }
+                });
+
+                KasEntity kasEntity = new KasEntity();
+
+                kasEntity.setIId(getI_ID);
+                kasEntity.setIIdSkpd(val.getIidSkpd());
+                kasEntity.setCAnggTahun(val.getCanggTahun());
+                kasEntity.setIIdBas(val.getIid());
+                kasEntity.setVkas(val.getVkas());
+                kasEntity.setVkasAudited(val.getVkasAudited());
+                kasEntity.setDPgunRekam(Date.valueOf(LocalDate.now()));
+
+                listID.add(kasEntity);
+
+                SqlParameterSource[] sqlinsert = SqlParameterSourceUtils.createBatch(listID);
+
+                this.jdbcTemplate.batchUpdate(insertQuery,sqlinsert);
+            }
+        }
+
 
         SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
-        System.out.println(value);
         String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
-                "SET V_KAS = :V_KAS,\n" +
-                "    V_KAS_AUDITED = :V_KAS_AUDITED\n" +
-                "WHERE I_ID = :I_ID";
+                "SET V_KAS = :vkas,\n" +
+                "    V_KAS_AUDITED = :vkasAudited,\n" +
+                "WHERE I_ID = :iid";
+
 
         this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
