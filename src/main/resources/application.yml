@@ -11,9 +11,9 @@ spring:
   mvc:
     dispatch-options-request: true
   datasource:
-    url: jdbc:oracle:thin:@${DATABASE_HOST:localhost}:${DATABASE_PORT:1522}:${DATABASE_SID:xe}
-    username: ${DATABASE_USER:auth}
-    password: ${DATABASE_PASSWORD:auth}
+    url: jdbc:oracle:thin:@${DATABASE_HOST:tabeldata.ip-dynamic.com}:${DATABASE_PORT:1521}:${DATABASE_SID:xe}
+    username: ${DATABASE_USER:blud}
+    password: ${DATABASE_PASSWORD:blud}
   jpa:
     generate-ddl: false
     hibernate:
