@@ -27,7 +27,7 @@ public class KasController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody TmrKasEntity value) {
+    public ResponseEntity<?> save(@RequestBody List<TmrKasEntity> value) {
         service.save(value);
         return ResponseEntity.ok(value);
     }

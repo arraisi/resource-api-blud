@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Repository
@@ -22,7 +22,7 @@ public class KasDao {
 
     public List<TmrKasEntity> findAll() {
         String baseQuery =
-                        "SELECT \n" +
+                "SELECT \n" +
                         "\tnvl(tmrbakasblud.i_id,-1) id_tmrbakasblud \n" +
                         "  \t,tmrba.c_angg_tahun\n" +
                         "  \t,tmrba.i_idskpd\n" +
@@ -73,27 +73,15 @@ public class KasDao {
     }
 
 
-    public void save(TmrKasEntity value) {
+    public void save(List<TmrKasEntity> value) {
 
+        SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
+        System.out.println(value);
         String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
-                "SET I_ID = :I_ID,\n" +
-                "    I_IDSKPD = :I_IDSKPD,\n" +
-                "    C_ANGG_TAHUN = :C_ANGG_TAHUN,\n" +
-                "    V_KAS = :V_KAS,\n" +
+                "SET V_KAS = :V_KAS,\n" +
                 "    V_KAS_AUDITED = :V_KAS_AUDITED\n" +
-                "WHERE I_IDSKPD = :I_IDSKPD";
+                "WHERE I_ID = :I_ID";
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("I_ID", value.getI_ID());
-        paramMap.put("I_IDSKPD", value.getI_IDSKPD());
-        paramMap.put("C_ANGG_TAHUN", value.getC_ANGG_TAHUN());
-        paramMap.put("V_KAS", value.getV_KAS());
-        paramMap.put("V_KAS_AUDITED", value.getV_KAS_AUDITED());
-
-        System.out.println(queryBuilder);
-        System.out.println(paramMap);
-
-        jdbcTemplate.update(queryBuilder, paramMap);
+        this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
-
 }
