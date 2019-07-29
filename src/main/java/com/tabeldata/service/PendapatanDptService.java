@@ -43,10 +43,23 @@ public class PendapatanDptService {
     }
 
     /**
-     * Method untuk update semua data Pendapatan
+     * Method untuk update Pendapatan from Rincian Pendapatan
      */
-    public PendapatanDptEntity updatePendapatan(PendapatanDptEntity value, Principal principal) {
+    public PendapatanDptEntity updateAnggaranPendapatanFromRincian(PendapatanDptEntity value, Principal principal) {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
+        value.setIdUbahPengguna(penggunaLogin.getId());
+        value.setTanggalUbahPengguna(new Timestamp(System.currentTimeMillis()));
+        dao.updateAllDataPendapatanById(value);
+        PendapatanDptEntity pendapatanDptEntity = dao.getPendapatanDpt(value.getId());
+        return pendapatanDptEntity;
+    }
+
+    /**
+     * Method untuk update Semua Pendapatan By AKB
+     */
+    public PendapatanDptEntity updateAkbPendapatan(PendapatanDptEntity pendapatan, Principal principal) {
+        DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
+        PendapatanDptEntity value = pendapatanAkbMapperLocal(pendapatan);
         value.setIdUbahPengguna(penggunaLogin.getId());
         value.setTanggalUbahPengguna(new Timestamp(System.currentTimeMillis()));
         dao.updateAllDataPendapatanById(value);
@@ -73,6 +86,29 @@ public class PendapatanDptService {
         value.setIdBas(loadDptEntity.getIdBas());
         value.setAnggaranDpa(loadDptEntity.getAnggaranDpa());
         value.setAnggaranTapd(loadDptEntity.getAnggaranTapd());
+        return value;
+    }
+
+    /**
+     * Method Untuk Local Mapper AKB
+     */
+    private PendapatanDptEntity pendapatanAkbMapperLocal(PendapatanDptEntity p) {
+        PendapatanDptEntity value = getPendapatanById(p.getId());
+        value.setAnggaranDpa(p.getAnggaranDpa());
+        value.setAnggaranTapd(p.getAnggaranTapd());
+        value.setJenis(p.getJenis());
+        value.setRpaBulan1(p.getRpaBulan1());
+        value.setRpaBulan2(p.getRpaBulan2());
+        value.setRpaBulan3(p.getRpaBulan3());
+        value.setRpaBulan4(p.getRpaBulan4());
+        value.setRpaBulan5(p.getRpaBulan5());
+        value.setRpaBulan6(p.getRpaBulan6());
+        value.setRpaBulan7(p.getRpaBulan7());
+        value.setRpaBulan8(p.getRpaBulan8());
+        value.setRpaBulan9(p.getRpaBulan9());
+        value.setRpaBulan10(p.getRpaBulan10());
+        value.setRpaBulan11(p.getRpaBulan11());
+        value.setRpaBulan12(p.getRpaBulan12());
         return value;
     }
 }

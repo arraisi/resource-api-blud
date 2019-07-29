@@ -49,4 +49,20 @@ public class PendapatanDptController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PendapatanDptEntity> getListPendapatanById(@PathVariable Integer id) {
+        PendapatanDptEntity value = service.getPendapatanById(id);
+        if (value != null) {
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PostMapping("/akb/save")
+    public ResponseEntity<PendapatanDptEntity> saveAkb(@RequestBody PendapatanDptEntity pendapatanDptEntity, Principal principal) {
+        PendapatanDptEntity value = service.updateAkbPendapatan(pendapatanDptEntity, principal);
+        return new ResponseEntity<>(value, HttpStatus.OK);
+    }
 }

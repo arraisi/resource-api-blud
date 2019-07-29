@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -75,7 +74,7 @@ public class RincianPendapatanService {
                 dao.deleteRincianPendapatanByIdDptAndIdRincian(i, idPendapatan);
             }
         }
-        pendapatanDptService.updatePendapatan(pendapatan, principal); // Update Anggaran Pendapatan
+        pendapatanDptService.updateAnggaranPendapatanFromRincian(pendapatan, principal); // Update Anggaran Pendapatan
         List<RincianPendapatanEntity> listRincianDpt = dao.getRincianPendapatanByDptId(idPendapatan); // Get Rincian Pendapatan
         return listRincianDpt;
     }
@@ -117,7 +116,7 @@ public class RincianPendapatanService {
         }
         pendapatan.setAnggaranTapd(anggaran); // Anggaran TAPD pada Pendapatan di Update sesusai Jumlah semua anggaran di Rincian
         pendapatan.setAnggaranDpa(anggaran); // Anggaran DPA pada Pendapatan di Update sesusai Jumlah semua anggaran di Rincian
-        pendapatanDptService.updatePendapatan(pendapatan, principal); // Update Anggaran Pendapatan
+        pendapatanDptService.updateAnggaranPendapatanFromRincian(pendapatan, principal); // Update Anggaran Pendapatan
         List<RincianPendapatanEntity> listRincianDpt = dao.getRincianPendapatanByDptId(idPendapatan); // Get Rincian Pendapatan
         return listRincianDpt;
     }
