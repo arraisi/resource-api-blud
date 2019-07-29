@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Data
@@ -18,6 +19,6 @@ public class LoadDptEntity {
     private Integer idBas; // I_IBAS
     private String kodeAkun; // C_AKUN
     private String namaAkun; // N_AKUN
-    private Double anggaranDpa; // V_ANGG_DPA
-    private Double anggaranTapd; // V_ANGG_TAPD
+    private BigDecimal anggaranDpa; // V_ANGG_DPA
+    private BigDecimal anggaranTapd; // V_ANGG_TAPD
 }

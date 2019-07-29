@@ -125,3 +125,4 @@ local.properties
 
 ### log system
 *.log
+*.log.*

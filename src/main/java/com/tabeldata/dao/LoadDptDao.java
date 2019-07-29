@@ -18,6 +18,9 @@ public class LoadDptDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
+    /**
+     * Method Untuk Load DPT Saat Pertama Kali Buka Halaman Pendapatan
+     */
     public List<LoadDptEntity> getLoadPendapatan(String tahunAnggaran, String skpdId) {
         String sql = "SELECT NVL(xxx.i_id, -1)          idTrx\n" +
                 "     , tmrba.c_angg_tahun      AS tahunAnggaran\n" +
@@ -55,8 +58,8 @@ public class LoadDptDao {
             loadDptEntity.setIdBas(resultSet.getInt("idBas"));
             loadDptEntity.setKodeAkun(resultSet.getString("kodeAkun"));
             loadDptEntity.setNamaAkun(resultSet.getString("namaAkun"));
-            loadDptEntity.setAnggaranDpa(resultSet.getDouble("anggaranDpa"));
-            loadDptEntity.setAnggaranTapd(resultSet.getDouble("anggaranTapd"));
+            loadDptEntity.setAnggaranDpa(resultSet.getBigDecimal("anggaranDpa"));
+            loadDptEntity.setAnggaranTapd(resultSet.getBigDecimal("anggaranTapd"));
             return loadDptEntity;
         });
     }
