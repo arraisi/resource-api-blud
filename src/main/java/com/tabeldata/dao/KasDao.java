@@ -149,7 +149,7 @@ public class KasDao {
         String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
                 "SET V_KAS = :vkas,\n" +
                 "    V_KAS_AUDITED = :vkasAudited\n" +
-                "WHERE I_IDSKPD = :iidSkpd";
+                "WHERE I_IDSKPD = :iidSkpd AND I_IDBAS =:iid ";
 
         this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
