@@ -1,9 +1,10 @@
 package com.tabeldata.controller;
 
-import com.tabeldata.entity.LoadDpt;
+import com.tabeldata.entity.LoadDptEntity;
 import com.tabeldata.service.LoadDptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +24,29 @@ public class LoadDptController {
     private LoadDptService service;
 
     @GetMapping("/load")
-    public ResponseEntity<List<LoadDpt>> getLoadPendapatan(
+    public ResponseEntity<List<LoadDptEntity>> getLoadPendapatan(
             @RequestParam String tahunAnggaran,
             @RequestParam String skpdId) {
-        List<LoadDpt> value = service.getLoadPendapatan(tahunAnggaran, skpdId);
+        List<LoadDptEntity> value = service.getLoadPendapatan(tahunAnggaran, skpdId);
         if (!value.isEmpty()) {
             return new ResponseEntity<>(value, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<LoadDptEntity> getLoadPendapatanById(
+            @RequestParam String tahunAnggaran,
+            @RequestParam String skpdId,
+            @RequestParam String dptId
+    ) {
+        try {
+            LoadDptEntity value = service.getLoadPendapatanByIdDpt(tahunAnggaran, skpdId, dptId);
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 }
