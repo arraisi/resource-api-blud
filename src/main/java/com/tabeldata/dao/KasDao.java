@@ -145,14 +145,12 @@ public class KasDao {
             }
         }
 
+        SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
+        String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
+                "SET V_KAS = :vkas,\n" +
+                "    V_KAS_AUDITED = :vkasAudited\n" +
+                "WHERE I_IDSKPD = :iidSkpd";
 
-//        SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
-//        String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
-//                "SET V_KAS = :vkas,\n" +
-//                "    V_KAS_AUDITED = :vkasAudited\n" +
-//                "WHERE I_ID = :iid";
-//
-//
-//        this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
+        this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
 }
