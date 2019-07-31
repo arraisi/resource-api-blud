@@ -5,10 +5,12 @@ import com.tabeldata.entity.TmrKasEntity;
 import com.tabeldata.service.KasService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,9 +24,16 @@ public class KasController {
 
 
     @GetMapping("/findAll")
-    @ResponseBody
-    public List<TmrKasEntity> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<TmrKasEntity>> findAll(
+            @RequestParam String tahunAnggaran,
+            @RequestParam String skpdId) {
+
+        List<TmrKasEntity> value = service.findAll(tahunAnggaran, skpdId);
+        if (!value.isEmpty()) {
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+        }
     }
 
     @PostMapping("/save")

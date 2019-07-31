@@ -15,8 +15,8 @@ public class KasService {
     @Autowired
     private KasDao dao;
 
-    public List<TmrKasEntity> findAll() {
-        return dao.findAll();
+    public List<TmrKasEntity> findAll(String tahunAnggaran, String skpdId) {
+        return dao.findAll(tahunAnggaran, skpdId);
     }
 
     @Transactional

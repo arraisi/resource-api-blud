@@ -4,6 +4,7 @@ import com.tabeldata.entity.KasEntity;
 import com.tabeldata.entity.TmrKasEntity;
 import com.tabeldata.entity.TrrbaNoMax;
 import lombok.extern.slf4j.Slf4j;
+import org.exolab.castor.types.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,7 +30,8 @@ public class KasDao {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<TmrKasEntity> findAll() {
+    public List<TmrKasEntity> findAll(String tahunAnggaran, String skpdId) {
+        System.out.println(skpdId);
         String baseQuery =
                 "SELECT \n" +
                         "\tnvl(tmrbakasblud.i_id,-1) idTmrbakasBlud \n" +
@@ -53,15 +55,19 @@ public class KasDao {
                         "    \tAND trrbaskpdbas.i_idbas = tmrbakasblud.i_idbas\n" +
                         "WHERE \n" +
                         "  \ttrbas.c_akun BETWEEN '1' AND '1.9' \n" +
-                        "     AND tmrba.c_angg_tahun = '2020'\n" +
-                        "     AND tmrba.i_idskpd = '12810' \n" +
+                        "     AND tmrba.c_angg_tahun = :vtahun\n" +
+                        "     AND tmrba.i_idskpd = :vidskpd \n" +
                         "ORDER BY \n" +
                         "\ttmrba.c_angg_tahun,  trrbaskpd.c_skpd, C_AKUN";
+
+                        Map<String, Object> param = new HashMap<>();
+                        param.put("vtahun", tahunAnggaran);
+                        param.put("vidskpd", skpdId);
 
 
         log.info("{}", baseQuery);
 
-        return jdbcTemplate.query(baseQuery, new RowMapper<TmrKasEntity>() {
+        return jdbcTemplate.query(baseQuery,param, new RowMapper<TmrKasEntity>() {
             @Override
             public TmrKasEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TmrKasEntity tmrKasEntity = new TmrKasEntity();
@@ -78,18 +84,13 @@ public class KasDao {
                 return tmrKasEntity;
             }
         });
-
     }
 
-
     public void save(List<TmrKasEntity> value) {
-        System.out.println(value);
-
-
+        System.out.println("LIST DATA KAS "+value);
 
         for (TmrKasEntity val: value) {
             if(val.getIdTmrbakasBlud() == -1){
-
                 String insertQuery = "INSERT INTO TMRBAKASBLUD " +
                         "(I_ID," +
                         "I_IDSKPD," +
@@ -109,8 +110,6 @@ public class KasDao {
                 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
                 mapSqlParameterSource.addValue("N_TABEL", "TMRBAKASBLUD");
 
-                System.out.println("GET ID FROM TRRBANOMAX"+getID);
-
                 Integer getI_ID = jdbcTemplate.queryForObject(getID, mapSqlParameterSource, new RowMapper<Integer>() {
                     @Override
                     public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -118,7 +117,6 @@ public class KasDao {
                     }
                 });
 
-//                KasEntity datakas = new KasEntity();
                 Map<String, Object> paramMap = new HashMap<>();
                 paramMap.put("iId",getI_ID);
                 paramMap.put("iIdSkpd", val.getIidSkpd());
@@ -129,9 +127,7 @@ public class KasDao {
 //                paramMap.put("dPgunRekam", Date.valueOf(LocalDate.now()));
 
                 this.jdbcTemplate.update(insertQuery,paramMap);
-
                 TrrbaNoMax trrbaNoMax = new TrrbaNoMax();
-
                 String queryBuilder = "UPDATE TRRBANOMAX\n" +
                 "SET I_IDMAX = :iIdMax\n" +
                 "WHERE N_TABEL = :nTabel";
@@ -148,8 +144,13 @@ public class KasDao {
         SqlParameterSource[] sqlParameterSources = SqlParameterSourceUtils.createBatch(value);
         String queryBuilder = "UPDATE TMRBAKASBLUD\n" +
                 "SET V_KAS = :vkas,\n" +
-                "    V_KAS_AUDITED = :vkasAudited\n" +
+                "    V_KAS_AUDITED = :vkasAudited,\n" +
+                "    I_PGUN_UBAH = :iidSkpd,\n" +
+                "    D_PGUN_UBAH = CURRENT_DATE\n" +
                 "WHERE I_IDSKPD = :iidSkpd AND I_IDBAS =:iid ";
+
+
+
 
         this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
     }
