@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -40,18 +42,18 @@ public class KegiatanController {
      * API Untuk Get No Kegiatan
      */
     @GetMapping("/load/no-kegiatan/{tahunAnggaran}/{idProgram}/{idSkpd}")
-    public ResponseEntity<Integer> loadNoKegiatan(
+    public ResponseEntity<?> loadNoKegiatan(
             @PathVariable String tahunAnggaran,
             @PathVariable Integer idProgram,
             @PathVariable Integer idSkpd
     ) {
-        Integer noKegiatan;
+        Map<String, Object> kegiatanNo = new HashMap<>();
         try {
-            noKegiatan = service.getNoKegiatan(tahunAnggaran, idProgram, idSkpd);
-            return new ResponseEntity<>(noKegiatan, HttpStatus.OK);
+            kegiatanNo.put("noKegiatan", service.getNoKegiatan(tahunAnggaran, idProgram, idSkpd));
+            return new ResponseEntity<>(kegiatanNo, HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(0, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 }
