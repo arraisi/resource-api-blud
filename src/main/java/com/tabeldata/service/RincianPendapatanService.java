@@ -137,4 +137,8 @@ public class RincianPendapatanService {
         return value;
     }
 
+    public Integer deleteRincianPendapatan (Integer idDpt, Integer idRincian) {
+        return dao.deleteRincianPendapatanById(idDpt, idRincian);
+    }
+
 }

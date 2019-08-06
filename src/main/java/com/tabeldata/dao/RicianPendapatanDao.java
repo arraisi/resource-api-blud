@@ -102,7 +102,7 @@ public class RicianPendapatanDao {
     /**
      * Method untuk delete rincian berdasarkan id DPT dan ID Rincian
      */
-    public int deleteRincianPendapatanById(Integer idDpt, Integer idRincian) {
+    public Integer deleteRincianPendapatanById(Integer idDpt, Integer idRincian) {
         //language=Oracle
         String sql = "delete from  TMRBADPTRINCI where I_ID = :vIdRincian and I_IDDPT = :vIdDpt";
         Map<String, Object> param = new HashMap<>();
