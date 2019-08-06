@@ -52,4 +52,11 @@ public class RincianPendapatanController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping("/rincian/delete/{idDpt}/{idRincian}")
+    public ResponseEntity<Integer> deleteRincian(@PathVariable("idDpt") Integer idDpt, @PathVariable("idRincian") Integer idRincian) {
+        Integer deleted = service.deleteRincianPendapatan(idDpt, idRincian);
+        return new ResponseEntity<>(deleted, HttpStatus.OK);
+    }
+
 }
