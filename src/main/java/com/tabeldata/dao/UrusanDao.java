@@ -17,39 +17,25 @@ public class UrusanDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public List<UrusanEntity> getListUrusan() {
+    public List<UrusanEntity> getListUrusan(String tahunAnggaran) {
         //language=Oracle
-        String sql = "SELECT I_ID             AS id,\n" +
-                "       I_IDFUNGSI       AS idFungsi,\n" +
-                "       C_WAJIB          AS wajib,\n" +
-                "       I_URUSAN         AS urusan,\n" +
-                "       C_URUSAN         AS kodeUrusan,\n" +
-                "       N_URUSAN         AS namaUrusan,\n" +
-                "       C_AKTIF          AS aktif,\n" +
-                "       I_PGUN_REKAM     AS idPenggunaRekam,\n" +
-                "       D_PGUN_REKAM     AS tanggalPenggunaRekam,\n" +
-                "       I_PGUN_UBAH      AS idPenggunaUbah,\n" +
-                "       D_PGUN_UBAH      AS tanggalPenggunaUbah,\n" +
-                "       C_TAHUN_BERLAKU  AS tahunBerlaku,\n" +
-                "       C_TAHUN_BERAKHIR AS tahunBerakhir\n" +
-                "FROM TRURUSAN ";
+        String sql = "SELECT I_ID     AS id,\n" +
+                "       I_URUSAN AS urusan,\n" +
+                "       C_URUSAN AS kodeUrusan,\n" +
+                "       N_URUSAN AS namaUrusan\n" +
+                "FROM TRURUSAN\n" +
+                "WHERE I_IDFUNGSI = 7\n" +
+                "  AND C_AKTIF = '1'\n" +
+                "  AND TO_NUMBER(:vTahunAnggaran) BETWEEN TO_NUMBER(C_TAHUN_BERLAKU) AND TO_NUMBER(C_TAHUN_BERAKHIR) ";
         Map<String, Object> params = new HashedMap<>();
+        params.put("vTahunAnggaran", tahunAnggaran);
 
         return this.namedParameterJdbcTemplate.query(sql, params, (rs, i) -> {
             UrusanEntity urusan = new UrusanEntity();
             urusan.setId(rs.getInt("id"));
-            urusan.setIdFungsi(rs.getInt("idFungsi"));
-            urusan.setWajib(rs.getInt("wajib"));
             urusan.setUrusan(rs.getString("urusan"));
             urusan.setKodeUrusan(rs.getString("kodeUrusan"));
             urusan.setNamaUrusan(rs.getString("namaUrusan"));
-            urusan.setAktif(rs.getString("aktif"));
-            urusan.setIdPenggunaRekam(rs.getInt("idPenggunaRekam"));
-            urusan.setTanggalPenggunaRekam(rs.getTimestamp("tanggalPenggunaRekam"));
-            urusan.setIdPenggunaUbah(rs.getInt("idPenggunaUbah"));
-            urusan.setTanggalPenggunaUbah(rs.getTimestamp("tanggalPenggunaUbah"));
-            urusan.setTahunBerlaku(rs.getString("tahunBerlaku"));
-            urusan.setTahunBerakhir(rs.getString("tahunBerakhir"));
             return urusan;
         });
     }

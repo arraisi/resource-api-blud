@@ -17,6 +17,9 @@ public class ProgramDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    /**
+     * Getl All List Program
+     */
     public List<ProgramEntity> getListProgram() {
         String sql = "SELECT I_ID             AS id,\n" +
                 "       I_IDURUSAN       AS idUrusan,\n" +
@@ -45,6 +48,40 @@ public class ProgramDao {
             program.setTanggalPenggunaUbah(rs.getTimestamp("tanggalPenggunaUbah"));
             program.setTahunBerlaku(rs.getString("tahunBerlaku"));
             program.setTahunBerakhir(rs.getString("tahunBerakhir"));
+            return program;
+        });
+    }
+
+    /**
+     * Get List Program By Id Urusan
+     */
+    public List<ProgramEntity> getListProgramByIdUrusan(Integer idUrusan, String tahunAnggaran) {
+        String sql = "SELECT TRP.I_ID    AS id,\n" +
+                "       TRP.C_PROGRAM    AS kodeProgram,\n" +
+                "       TRP.N_PROGRAM    AS namaProgram\n" +
+                "FROM TRPROGRAM \"TRP\"\n" +
+                "         INNER JOIN TRURUSAN \"TRU\" ON TRU.I_ID = TRP.I_IDURUSAN\n" +
+                "WHERE \n" +
+                "    (\n" +
+                "        TRP.C_AKTIF = '1'\n" +
+                "        AND TO_NUMBER(:vTahunAnggaran) BETWEEN TO_NUMBER(TRP.C_TAHUN_BERLAKU) AND TO_NUMBER(TRP.C_TAHUN_BERAKHIR)\n" +
+                "    )\n" +
+                "    AND \n" +
+                "    (\n" +
+                "        TRU.I_IDFUNGSI = 7\n" +
+                "        AND TRU.C_AKTIF = '1'\n" +
+                "        AND TO_NUMBER(:vTahunAnggaran) BETWEEN TO_NUMBER(TRU.C_TAHUN_BERLAKU) AND TO_NUMBER(TRU.C_TAHUN_BERAKHIR)\n" +
+                "    )\n" +
+                "    AND TRU.I_ID = :vIdUrusan ";
+        Map<String, Object> param = new HashedMap<>();
+        param.put("vIdUrusan", idUrusan);
+        param.put("vTahunAnggaran", tahunAnggaran);
+
+        return this.namedParameterJdbcTemplate.query(sql, param, (rs, i) -> {
+            ProgramEntity program = new ProgramEntity();
+            program.setId(rs.getInt("id"));
+            program.setKodeProgram(rs.getString("kodeProgram"));
+            program.setNamaProgram(rs.getString("namaProgram"));
             return program;
         });
     }

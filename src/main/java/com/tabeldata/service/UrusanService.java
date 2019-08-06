@@ -15,8 +15,8 @@ public class UrusanService {
     @Autowired
     private UrusanDao dao;
 
-    public List<UrusanEntity> getListUrusan() {
-        List<UrusanEntity> urusan = dao.getListUrusan();
+    public List<UrusanEntity> getListUrusan(String tahunAnggaran) {
+        List<UrusanEntity> urusan = dao.getListUrusan(tahunAnggaran);
         return urusan;
     }
 }

@@ -15,8 +15,19 @@ public class ProgramService {
     @Autowired
     private ProgramDao dao;
 
+    /**
+     * Get List ALL Program
+     */
     public List<ProgramEntity> getListProgram() {
         List<ProgramEntity> program = dao.getListProgram();
+        return program;
+    }
+
+    /**
+     * Get List Program By ID URUSAN
+     */
+    public List<ProgramEntity> getListProgramByIdUrusan(Integer idUrusan, String tahunAnggaran) {
+        List<ProgramEntity> program = dao.getListProgramByIdUrusan(idUrusan, tahunAnggaran);
         return program;
     }
 }
