@@ -4,13 +4,10 @@ import com.tabeldata.entity.UrusanEntity;
 import com.tabeldata.service.UrusanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +30,21 @@ public class UrusanController {
             return new ResponseEntity<>(urusanEntities, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+        }
+    }
+
+    /**
+     * Get Urusan By ID
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<UrusanEntity> getListUrusaById(@PathVariable Integer id) {
+        UrusanEntity urusanEntity;
+        try {
+            urusanEntity = service.getUrusanById(id);
+            return new ResponseEntity<>(urusanEntity, HttpStatus.OK);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new UrusanEntity(), HttpStatus.NO_CONTENT);
         }
     }
 }

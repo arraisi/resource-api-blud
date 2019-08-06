@@ -1,16 +1,20 @@
 package com.tabeldata.dao;
 
+import com.tabeldata.dto.KegiatanGetDto;
 import com.tabeldata.dto.LoadKegiatanDatatableDto;
 import com.tabeldata.entity.KegiatanEntity;
+import com.tabeldata.entity.ProgramEntity;
+import com.tabeldata.service.ProgramService;
+import com.tabeldata.service.UrusanService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.security.Principal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,6 +26,12 @@ public class KegiatanDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private UrusanService urusanService;
+
+    @Autowired
+    private ProgramService programService;
 
     /**
      * Load Kegiatan List Table Awal
@@ -118,7 +128,7 @@ public class KegiatanDao {
     /**
      * Save Kegiatan
      */
-    public int saveKegiatan(KegiatanEntity value) {
+    public int saveKegiatan(KegiatanEntity value) throws DataAccessException {
         String sql = "INSERT\n" +
                 "INTO TMRBAKEGIATAN (I_ID,\n" +
                 "                    I_IDSKPD,\n" +
@@ -134,7 +144,9 @@ public class KegiatanDao {
                 "                    I_PGUN_UBAH,\n" +
                 "                    D_PGUN_UBAH,\n" +
                 "                    N_ANGG_SUMBDANA,\n" +
-                "                    E_SASARAN)\n" +
+                "                    E_SASARAN,\n" +
+                "                    D_MULAI,\n" +
+                "                    D_SELESAI)\n" +
                 "VALUES (:id,\n" +
                 "        :idSkpd,\n" +
                 "        :idProgram,\n" +
@@ -149,7 +161,9 @@ public class KegiatanDao {
                 "        :idPenggunaUbah,\n" +
                 "        :tanggalPenggunaUbah,\n" +
                 "        :namaSumberDana,\n" +
-                "        :sasaranKegiatan) ";
+                "        :sasaranKegiatan,\n" +
+                "        :bulanMulai,\n" +
+                "        :bulanSelesai) ";
         Map<String, Object> params = new HashedMap<>();
         params.put("id", value.getId());
         params.put("idSkpd", value.getIdSkpd());
@@ -166,6 +180,8 @@ public class KegiatanDao {
         params.put("tanggalPenggunaUbah", value.getTanggalPenggunaUbah());
         params.put("namaSumberDana", value.getNamaSumberDana());
         params.put("sasaranKegiatan", value.getSasaranKegiatan());
+        params.put("bulanMulai", value.getBulanMulai());
+        params.put("bulanSelesai", value.getBulanSelesai());
         return this.namedParameterJdbcTemplate.update(sql, params);
     }
 
@@ -188,7 +204,9 @@ public class KegiatanDao {
                 "    I_PGUN_UBAH     = :idPenggunaUbah,\n" +
                 "    D_PGUN_UBAH     = :tanggalPenggunaUbah,\n" +
                 "    N_ANGG_SUMBDANA = :namaSumberDana,\n" +
-                "    E_SASARAN       = :sasaranKegiatan\n" +
+                "    E_SASARAN       = :sasaranKegiatan,\n" +
+                "    D_MULAI         = :bulanMulai,\n" +
+                "    D_SELESAI       = :bulanSelesai\n" +
                 "WHERE I_ID = :id ";
         Map<String, Object> params = new HashedMap<>();
         params.put("id", value.getId());
@@ -206,13 +224,15 @@ public class KegiatanDao {
         params.put("tanggalPenggunaUbah", value.getTanggalPenggunaUbah());
         params.put("namaSumberDana", value.getNamaSumberDana());
         params.put("sasaranKegiatan", value.getSasaranKegiatan());
+        params.put("bulanMulai", value.getBulanMulai());
+        params.put("bulanSelesai", value.getBulanSelesai());
         return this.namedParameterJdbcTemplate.update(sql, params);
     }
 
     /**
      * Get Kegiatan By ID
      */
-    public KegiatanEntity getKegiatanByID(Integer id) {
+    public KegiatanGetDto getKegiatanByID(Integer id) throws EmptyResultDataAccessException {
         String sql = "SELECT I_ID            AS id,\n" +
                 "       I_IDSKPD        AS idSkpd,\n" +
                 "       I_IDPROGRAM     AS idProgram,\n" +
@@ -227,14 +247,17 @@ public class KegiatanDao {
                 "       I_PGUN_UBAH     AS idPenggunaUbah,\n" +
                 "       D_PGUN_UBAH     AS tanggalPenggunaUbah,\n" +
                 "       N_ANGG_SUMBDANA AS namaSumberDana,\n" +
-                "       E_SASARAN       AS sasaranKegiatan\n" +
+                "       E_SASARAN       AS sasaranKegiatan,\n" +
+                "       D_MULAI         AS bulanMulai,\n" +
+                "       D_SELESAI       AS bulanSelesai\n" +
                 "FROM TMRBAKEGIATAN\n" +
                 "WHERE I_ID = :vId ";
         Map<String, Object> param = new HashedMap<>();
         param.put("vId", id);
 
         return this.namedParameterJdbcTemplate.queryForObject(sql, param, (rs, i) -> {
-            KegiatanEntity value = new KegiatanEntity();
+            ProgramEntity programEntity = programService.getProgramByID(rs.getInt("idProgram"));
+            KegiatanGetDto value = new KegiatanGetDto();
             value.setId(rs.getInt("id"));
             value.setIdSkpd(rs.getInt("idSkpd"));
             value.setIdProgram(rs.getInt("idProgram"));
@@ -250,6 +273,10 @@ public class KegiatanDao {
             value.setTanggalPenggunaUbah(rs.getTimestamp("tanggalPenggunaUbah"));
             value.setNamaSumberDana(rs.getString("namaSumberDana"));
             value.setSasaranKegiatan(rs.getString("sasaranKegiatan"));
+            value.setBulanMulai(rs.getString("bulanMulai"));
+            value.setBulanSelesai(rs.getString("bulanSelesai"));
+            value.setProgram(programEntity);
+            value.setUrusan(urusanService.getUrusanById(programEntity.getIdUrusan()));
             return value;
         });
     }

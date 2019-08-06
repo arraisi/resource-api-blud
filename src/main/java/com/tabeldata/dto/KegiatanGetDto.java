@@ -1,5 +1,7 @@
-package com.tabeldata.entity;
+package com.tabeldata.dto;
 
+import com.tabeldata.entity.ProgramEntity;
+import com.tabeldata.entity.UrusanEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KegiatanEntity {
+public class KegiatanGetDto {
 
     private Integer id;
     private Integer idSkpd;
@@ -29,4 +31,6 @@ public class KegiatanEntity {
     private String sasaranKegiatan;
     private String bulanMulai;
     private String bulanSelesai;
+    private ProgramEntity program;
+    private UrusanEntity urusan;
 }

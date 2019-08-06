@@ -3,11 +3,13 @@ package com.tabeldata.service;
 import com.tabeldata.dao.KegiatanDao;
 import com.tabeldata.dao.RbaNoMaxDao;
 import com.tabeldata.dto.DataPenggunaLogin;
+import com.tabeldata.dto.KegiatanGetDto;
 import com.tabeldata.dto.LoadKegiatanDatatableDto;
 import com.tabeldata.entity.KegiatanEntity;
 import com.tabeldata.entity.PendapatanDptEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,20 @@ public class KegiatanService {
         return noKegiatan;
     }
 
-    public KegiatanEntity saveKegiatan(KegiatanEntity value, Principal principal) {
+    public KegiatanGetDto saveOrUpdate(KegiatanEntity value, Principal principal) throws DataAccessException {
+        KegiatanGetDto kegiatan;
+        if (value.getId() == null) {
+            kegiatan = saveKegiatan(value, principal);
+        } else {
+            kegiatan = updateKegiatan(value, principal);
+        }
+        return kegiatan;
+    }
+
+    /**
+     * Save Kegiatan
+     */
+    public KegiatanGetDto saveKegiatan(KegiatanEntity value, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         Integer idKegiatan = rbaNoMaxDao.getIdFromNoMax("TMRBAKEGIATAN"); // get ID from TRRBANOMAX by nama Table "TMRBAKEGIATAN"
         value.setId(idKegiatan);
@@ -49,7 +64,24 @@ public class KegiatanService {
         value.setTanggalPenggunaRekam(new Timestamp(System.currentTimeMillis()));
         dao.saveKegiatan(value);
         rbaNoMaxDao.updateIdNoMax(idKegiatan, "TMRBAKEGIATAN");
-        KegiatanEntity kegiatanEntity = dao.getKegiatanByID(idKegiatan);
+        KegiatanGetDto kegiatanEntity = dao.getKegiatanByID(idKegiatan);
         return kegiatanEntity;
+    }
+
+    /**
+     * Update Kegiatan
+     */
+    public KegiatanGetDto updateKegiatan(KegiatanEntity value, Principal principal) throws DataAccessException {
+        DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
+        value.setIdPenggunaUbah(penggunaLogin.getId());
+        value.setTanggalPenggunaUbah(new Timestamp(System.currentTimeMillis()));
+        dao.updateKegiatan(value);
+        KegiatanGetDto kegiatanEntity = dao.getKegiatanByID(value.getId());
+        return kegiatanEntity;
+    }
+
+    public KegiatanGetDto getKegiatanByID(Integer idKegiatan) throws EmptyResultDataAccessException {
+        KegiatanGetDto kegiatan = dao.getKegiatanByID(idKegiatan);
+        return kegiatan;
     }
 }

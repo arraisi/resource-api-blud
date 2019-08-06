@@ -1,17 +1,20 @@
 package com.tabeldata.controller;
 
+import com.tabeldata.dto.KegiatanGetDto;
 import com.tabeldata.dto.LoadKegiatanDatatableDto;
+import com.tabeldata.dto.LokasiKegiatanDto;
+import com.tabeldata.entity.KegiatanEntity;
 import com.tabeldata.service.KegiatanService;
+import com.tabeldata.service.LokasiKegiatanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +27,23 @@ public class KegiatanController {
 
     @Autowired
     private KegiatanService service;
+
+    @Autowired
+    private LokasiKegiatanService lokasiKegiatanService;
+
+
+    /**
+     * Lokasi Kegiatan List For Master
+     */
+    @GetMapping("/lokasi/list")
+    public ResponseEntity<List<LokasiKegiatanDto>> getListLokasiKegiatan() {
+        List<LokasiKegiatanDto> value = lokasiKegiatanService.getListLokasiKegiatan();
+        if (!value.isEmpty()) {
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+        }
+    }
 
     /**
      * API Untuk Load Kegiatan Untuk Pertama di Menu Kegiatan Table
@@ -54,6 +74,30 @@ public class KegiatanController {
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<KegiatanGetDto> saveKegiatan(@RequestBody KegiatanEntity kegiatan, Principal principal) {
+        KegiatanGetDto value;
+        try {
+            value = service.saveOrUpdate(kegiatan, principal);
+            return new ResponseEntity<>(value, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new KegiatanGetDto(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{idKegiatan}")
+    public ResponseEntity<KegiatanGetDto> getKegiatanById(@PathVariable Integer idKegiatan) {
+        KegiatanGetDto value;
+        try {
+            value = service.getKegiatanByID(idKegiatan);
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new KegiatanGetDto(), HttpStatus.NO_CONTENT);
         }
     }
 }
