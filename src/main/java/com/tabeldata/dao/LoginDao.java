@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 
 @Slf4j
@@ -19,7 +20,7 @@ public class LoginDao {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<String> getTahunAnggaranByNrk(String nrk) throws EmptyResultDataAccessException {
+    public List<String> getTahunAnggaranByNrk(String nrk) {
 
         String query = "SELECT TO_NUMBER(C_ANGG_TAHUN) AS TahunAngg FROM TMRBA WHERE I_NRK_PA = :nrk order by TahunAngg ASC";
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();

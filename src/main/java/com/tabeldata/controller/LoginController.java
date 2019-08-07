@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -21,11 +22,11 @@ public class LoginController {
 
     @GetMapping("/get-tahun-anggaran/{nrk}")
     public ResponseEntity<List<String>> getTahunAnggaranByNrk(@PathVariable String nrk) {
-
+        List<String> list;
         try {
-            List<String> list = service.getTahunAnggaranByNrk(nrk);
+            list = service.getTahunAnggaranByNrk(nrk);
             return new ResponseEntity<>(list, HttpStatus.OK);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
