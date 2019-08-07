@@ -2,6 +2,7 @@ package com.tabeldata.service;
 
 import com.tabeldata.dao.LoginDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -11,10 +12,10 @@ import java.util.List;
 public class LoginService {
 
     @Autowired
-    LoginDao dao;
+    private LoginDao dao;
 
 
-    public List<String> getTahunAnggaranByNrk(String nrk) {
+    public List<String> getTahunAnggaranByNrk(String nrk) throws EmptyResultDataAccessException {
 
         List<String> listTahunAnggaran = dao.getTahunAnggaranByNrk(nrk);
         Integer listLengt = listTahunAnggaran.size();

@@ -17,7 +17,7 @@ import java.util.List;
 public class LoginController {
 
     @Autowired
-    LoginService service;
+    private LoginService service;
 
     @GetMapping("/get-tahun-anggaran/{nrk}")
     public ResponseEntity<List<String>> getTahunAnggaranByNrk(@PathVariable String nrk) {
