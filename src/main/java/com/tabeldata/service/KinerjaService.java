@@ -45,7 +45,7 @@ public class KinerjaService {
             noUrut += 1;
             if (val.getId() != null) {
                 val.setNoUrut(noUrut);
-                dao.updateKinerja(data);
+                dao.updateKinerja(val);
             } else {
                 val.setId(idKinerja);
                 val.setIdPenggunaRekam(penggunaLogin.getId());
@@ -54,9 +54,42 @@ public class KinerjaService {
                 val.setIdKegiatan(idKegiatan);
                 val.setIdSkpd(idSkpd);
                 val.setNoUrut(noUrut);
-                dao.saveKinerja(data);
+                dao.saveKinerja(val);
                 rbaNoMaxDao.updateIdNoMax(idKinerja, "TMRBAKEGIATANKINERJA");
             }
+        }
+        List<LoadKinerjaDto> loadKinerjaDtoList = dao.loadKinerja(tahunAnggaran, idKegiatan, idSkpd);
+        return loadKinerjaDtoList;
+    }
+
+    /**
+     * Update kinerja
+     */
+    public List<LoadKinerjaDto> updateKinerja(KinerjaSaveDto data, String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Principal principal) throws DataAccessException {
+        DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
+        data.setIdPenggunaUbah(penggunaLogin.getId());
+        data.setTanggalPenggunaUbah(new Timestamp(System.currentTimeMillis()));
+        dao.updateKinerja(data);
+        // Untuk Mengurutkan kembali No Urut
+        List<KinerjaSaveDto> kinerjaKegiatanList = dao.getKinerjaByIdKegiatanSkpdTahun(tahunAnggaran, idKegiatan, idSkpd);
+        Integer noUrut = 0;
+        for (KinerjaSaveDto val : kinerjaKegiatanList) {
+            noUrut += 1;
+            val.setNoUrut(noUrut);
+            dao.updateKinerja(val);
+        }
+        List<LoadKinerjaDto> loadKinerjaDtoList = dao.loadKinerja(tahunAnggaran, idKegiatan, idSkpd);
+        return loadKinerjaDtoList;
+    }
+
+    public List<LoadKinerjaDto> deleteKinerja(String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Integer idKinerja) throws DataAccessException {
+        dao.deleteKinerja(tahunAnggaran, idKegiatan, idSkpd, idKinerja);
+        List<KinerjaSaveDto> kinerjaKegiatanList = dao.getKinerjaByIdKegiatanSkpdTahun(tahunAnggaran, idKegiatan, idSkpd);
+        Integer noUrut = 0;
+        for (KinerjaSaveDto val : kinerjaKegiatanList) {
+            noUrut += 1;
+            val.setNoUrut(noUrut);
+            dao.updateKinerja(val);
         }
         List<LoadKinerjaDto> loadKinerjaDtoList = dao.loadKinerja(tahunAnggaran, idKegiatan, idSkpd);
         return loadKinerjaDtoList;

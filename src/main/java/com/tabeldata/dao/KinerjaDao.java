@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -217,8 +218,6 @@ public class KinerjaDao {
                 "    I_NOURUT          = :noUrut,\n" +
                 "    E_PGM_TOLOKUKUR   = :keteranganTolakUkur,\n" +
                 "    E_PGM_TARGKINERJA = :keteranganTargetKinerja,\n" +
-                "    I_PGUN_REKAM      = :idPenggunaRekam,\n" +
-                "    D_PGUN_REKAM      = :tanggalPenggunaRekam,\n" +
                 "    I_PGUN_UBAH       = :idPenggunaUbah,\n" +
                 "    D_PGUN_UBAH       = :tanggalPenggunaUbah\n" +
                 "WHERE I_ID = :id ";
@@ -231,8 +230,6 @@ public class KinerjaDao {
         params.put("noUrut", data.getNoUrut());
         params.put("keteranganTolakUkur", data.getKeteranganTolakUkur());
         params.put("keteranganTargetKinerja", data.getKeteranganTargetKinerja());
-        params.put("idPenggunaRekam", data.getIdPenggunaRekam());
-        params.put("tanggalPenggunaRekam", data.getTanggalPenggunaRekam());
         params.put("idPenggunaUbah", data.getIdPenggunaUbah());
         params.put("tanggalPenggunaUbah", data.getTanggalPenggunaUbah());
         return this.namedParameterJdbcTemplate.update(sql, params);
@@ -275,7 +272,25 @@ public class KinerjaDao {
             data.setTanggalPenggunaUbah(rs.getTimestamp("tanggalPenggunaUbah"));
             return data;
         });
+    }
 
+    /**
+     * Method untuk delete kinerja berdasarkan id Kegiatan, ID Skpd, Id Kinerja, dan Tahun Anggaran
+     */
+    public Integer deleteKinerja(String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Integer idKinerja) throws DataAccessException {
+        //language=Oracle
+        String sql = "DELETE\n" +
+                "FROM TMRBAKEGIATANKINERJA\n" +
+                "WHERE I_ID = :idKinerja\n" +
+                "  AND I_IDKEGIATAN = :idKegiatan\n" +
+                "  AND I_IDSKPD = :idSkpd\n" +
+                "  AND C_ANGG_TAHUN = :tahunAnggaran ";
+        Map<String, Object> param = new HashMap<>();
+        param.put("idKinerja", idKinerja);
+        param.put("idKegiatan", idKegiatan);
+        param.put("idSkpd", idSkpd);
+        param.put("tahunAnggaran", tahunAnggaran);
+        return this.namedParameterJdbcTemplate.update(sql, param);
     }
 
 }

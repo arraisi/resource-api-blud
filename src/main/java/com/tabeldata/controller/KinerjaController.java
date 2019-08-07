@@ -56,4 +56,38 @@ public class KinerjaController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<List<LoadKinerjaDto>> updateKinerja(
+            @RequestParam String tahunAnggaran,
+            @RequestParam Integer idKegiatan,
+            @RequestParam Integer idSkpd,
+            @RequestBody KinerjaSaveDto data,
+            Principal principal
+    ) {
+        try {
+            List<LoadKinerjaDto> kinerjaUpdate = service.updateKinerja(data, tahunAnggaran, idKegiatan, idSkpd, principal);
+            return new ResponseEntity<>(kinerjaUpdate, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<List<LoadKinerjaDto>> deleteKinerja(
+            @RequestParam String tahunAnggaran,
+            @RequestParam Integer idKegiatan,
+            @RequestParam Integer idSkpd,
+            @RequestParam Integer idKinerja
+    ) {
+        try {
+            List<LoadKinerjaDto> data = service.deleteKinerja(tahunAnggaran, idKegiatan, idSkpd, idKinerja);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 }
