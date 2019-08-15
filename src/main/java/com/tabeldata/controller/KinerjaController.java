@@ -1,16 +1,16 @@
 package com.tabeldata.controller;
 
+import com.tabeldata.dto.KinerjaSaveDto;
 import com.tabeldata.dto.LoadKinerjaDto;
 import com.tabeldata.service.KinerjaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +38,56 @@ public class KinerjaController {
         } else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
         }
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<List<LoadKinerjaDto>> saveKinerja(
+            @RequestParam String tahunAnggaran,
+            @RequestParam Integer idKegiatan,
+            @RequestParam Integer idSkpd,
+            @RequestBody KinerjaSaveDto data,
+            Principal principal
+    ) {
+        try {
+            List<LoadKinerjaDto> kinerjaSave = service.saveKinerja(data, tahunAnggaran, idKegiatan, idSkpd, principal);
+            return new ResponseEntity<>(kinerjaSave, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<List<LoadKinerjaDto>> updateKinerja(
+            @RequestParam String tahunAnggaran,
+            @RequestParam Integer idKegiatan,
+            @RequestParam Integer idSkpd,
+            @RequestBody KinerjaSaveDto data,
+            Principal principal
+    ) {
+        try {
+            List<LoadKinerjaDto> kinerjaUpdate = service.updateKinerja(data, tahunAnggaran, idKegiatan, idSkpd, principal);
+            return new ResponseEntity<>(kinerjaUpdate, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<List<LoadKinerjaDto>> deleteKinerja(
+            @RequestParam String tahunAnggaran,
+            @RequestParam Integer idKegiatan,
+            @RequestParam Integer idSkpd,
+            @RequestParam Integer idKinerja
+    ) {
+        try {
+            List<LoadKinerjaDto> data = service.deleteKinerja(tahunAnggaran, idKegiatan, idSkpd, idKinerja);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
