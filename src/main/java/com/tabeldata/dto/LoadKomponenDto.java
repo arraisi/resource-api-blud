@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 public class LoadKomponenDto {
 
     private Integer idBas;
+    private String kodeAkun;
+    private String namaAkun;
+    private String kodeAkunLra;
+    private String namaAkunLra;
     private Integer idBasKomponen;
     private String kodeKomponen;
     private String namaSatuan;

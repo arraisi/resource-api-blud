@@ -18,12 +18,10 @@ public class LoadKomponenDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     String QUERY_BELANJA_PEGAWAI = "SELECT TRB.I_ID             AS idBas\n" +
-            "    /*\n" +
-            "    ,TRB.C_AKUN\n" +
-            "    ,TRB.N_AKUN\n" +
-            "    ,TRB.C_AKUN_LRA\n" +
-            "    ,TRB.N_AKUN_LRA\n" +
-            "    */\n" +
+            "    ,TRB.C_AKUN             AS kodeAkun\n" +
+            "    ,TRB.N_AKUN             AS namaAkun\n" +
+            "    ,TRB.C_AKUN_LRA         AS kodeAkunLra\n" +
+            "    ,TRB.N_AKUN_LRA         AS namaAkunLra\n" +
             "     , TRK.I_ID             AS idBasKomponen\n" +
             "     , TRK.C_KOMPONEN       AS kodeKomponen\n" +
             "     , TRK.N_KOMPONEN       AS namaKomponen\n" +
@@ -56,12 +54,10 @@ public class LoadKomponenDao {
             "        AND TBP.I_ID = :vIdSkpd\n" +
             "    ) ";
     String QUERY_BELANJA_BARANG_JASA = "SELECT TRB.I_ID             AS idBas\n" +
-            "    /*\n" +
-            "    ,TRB.C_AKUN\n" +
-            "    ,TRB.N_AKUN\n" +
-            "    ,TRB.C_AKUN_LRA\n" +
-            "    ,TRB.N_AKUN_LRA\n" +
-            "    */\n" +
+            "    ,TRB.C_AKUN             AS kodeAkun\n" +
+            "    ,TRB.N_AKUN             AS namaAkun\n" +
+            "    ,TRB.C_AKUN_LRA         AS kodeAkunLra\n" +
+            "    ,TRB.N_AKUN_LRA         AS namaAkunLra\n" +
             "     , TRK.I_ID             AS idBasKomponen\n" +
             "     , TRK.C_KOMPONEN       AS kodeKomponen\n" +
             "     , TRK.N_KOMPONEN       AS namaKomponen\n" +
@@ -95,12 +91,10 @@ public class LoadKomponenDao {
             "    ) ";
     //language=Oracle
     String QUERY_BELANJA_MODAL = "SELECT TRB.I_ID             AS idBas\n" +
-            "    /*\n" +
-            "    ,TRB.C_AKUN\n" +
-            "    ,TRB.N_AKUN\n" +
-            "    ,TRB.C_AKUN_LRA\n" +
-            "    ,TRB.N_AKUN_LRA\n" +
-            "    */\n" +
+            "    ,TRB.C_AKUN             AS kodeAkun\n" +
+            "    ,TRB.N_AKUN             AS namaAkun\n" +
+            "    ,TRB.C_AKUN_LRA         AS kodeAkunLra\n" +
+            "    ,TRB.N_AKUN_LRA         AS namaAkunLra\n" +
             "     , TRK.I_ID             AS idBasKomponen\n" +
             "     , TRK.C_KOMPONEN       AS kodeKomponen\n" +
             "     , TRK.N_KOMPONEN       AS namaKomponen\n" +
@@ -154,6 +148,10 @@ public class LoadKomponenDao {
         return this.namedParameterJdbcTemplate.query(sql, params, (rs, i) -> {
             LoadKomponenDto data = new LoadKomponenDto();
             data.setIdBas(rs.getInt("idBas"));
+            data.setKodeAkun(rs.getString("kodeAkun"));
+            data.setNamaAkun(rs.getString("namaAkun"));
+            data.setKodeAkunLra(rs.getString("kodeAkunLra"));
+            data.setNamaAkunLra(rs.getString("namaAkunLra"));
             data.setIdBasKomponen(rs.getInt("idBasKomponen"));
             data.setKodeKomponen(rs.getString("kodeKomponen"));
             data.setKomponenHarga(rs.getBigDecimal("komponenHarga"));
