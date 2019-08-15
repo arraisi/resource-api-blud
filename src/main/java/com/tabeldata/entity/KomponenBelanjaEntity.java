@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KomponenBelanjaPegawaiEntity {
+public class KomponenBelanjaEntity {
 
     private Integer id;
     private Integer idKegiatan;

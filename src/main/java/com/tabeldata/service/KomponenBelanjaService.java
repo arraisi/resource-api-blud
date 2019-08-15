@@ -4,8 +4,9 @@ import com.tabeldata.dao.KomponenBelanjaPegawaiDao;
 import com.tabeldata.dao.KomponenDao;
 import com.tabeldata.dao.RbaNoMaxDao;
 import com.tabeldata.dto.DataPenggunaLogin;
-import com.tabeldata.entity.KomponenBelanjaPegawaiEntity;
+import com.tabeldata.entity.KomponenBelanjaEntity;
 import com.tabeldata.entity.KomponenEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
-public class KomponenBelanjaPegawaiService {
+public class KomponenBelanjaService {
 
     @Autowired
     KomponenBelanjaPegawaiDao dao;
@@ -33,14 +35,19 @@ public class KomponenBelanjaPegawaiService {
     RbaNoMaxDao rbaNoMaxDao;
 
     @Transactional
-    public void  saveBelanjaPegawai(List<KomponenBelanjaPegawaiEntity> komponenList, Integer idKegiatan, Integer idSkpd, String tahunAnggaran, String kodeKegiatan, Principal principal) {
-        List<KomponenBelanjaPegawaiEntity> listKomponenBelanja = new ArrayList<>();
-        for (KomponenBelanjaPegawaiEntity komponenBelanja : komponenList) {
+    public List<KomponenBelanjaEntity> saveBelanjaPegawai(List<KomponenBelanjaEntity> komponenList,
+                                                          Integer idKegiatan,
+                                                          Integer idSkpd,
+                                                          String tahunAnggaran,
+                                                          String kodeKegiatan,
+                                                          Principal principal) {
 
-            Integer noUrut = this.getNoUrut(idKegiatan, tahunAnggaran, komponenBelanja.getIdBas()) + 1;
-            this.updateNoUrut(noUrut, idKegiatan, tahunAnggaran, komponenBelanja.getIdBas());
 
+        List<Integer> ids = new ArrayList<>();
+        for (KomponenBelanjaEntity komponenBelanja : komponenList) {
             Integer id = rbaNoMaxDao.getIdFromNoMax("TMRBABLRINCI");
+            ids.add(id);
+            Integer noUrut = dao.getNoUrut(idKegiatan, tahunAnggaran, komponenBelanja.getIdBas());
 
             KomponenEntity komponen = komponenDao.getById(komponenBelanja.getIdBasKomponen());
             DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
@@ -63,22 +70,12 @@ public class KomponenBelanjaPegawaiService {
             komponenBelanja.setIdPenggunaRekam(penggunaLogin.getId());
             komponenBelanja.setTglPenggunaRekam(new Timestamp(System.currentTimeMillis()));
 
+            dao.updateNoUrut(noUrut, id);
             rbaNoMaxDao.updateIdNoMax(id, "TMRBABLRINCI");
-            listKomponenBelanja.add(komponenBelanja);
+            dao.saveKomponenBelanjaPegawai(komponenBelanja);
         }
 
-        dao.saveKomponenBelanjaPegawai(listKomponenBelanja);
-    }
-
-    public Integer getNoUrut(Integer idKegiatan, String tahunAnggaran, Integer idBas) {
-        return dao.getNoUrut(idKegiatan, tahunAnggaran, idBas);
-    }
-
-    @Transactional
-    public void updateNoUrut(Integer updateId, Integer idKegiatan, String tahunAnggaran, Integer idBas) {
-
-        dao.updateNoUrut(updateId, idKegiatan, tahunAnggaran, idBas);
-
+        return dao.listByParamater(ids);
     }
 
 
