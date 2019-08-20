@@ -1,6 +1,7 @@
 package com.tabeldata.controller;
 
-import com.tabeldata.entity.KomponenBelanjaEntity;
+import com.tabeldata.dto.KomponenBelanjaEditDto;
+import com.tabeldata.dto.KomponenBelanjaGetDto;
 import com.tabeldata.service.KomponenBelanjaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,17 +18,74 @@ public class KomponenBelanjaController {
     @Autowired
     KomponenBelanjaService service;
 
-    @PostMapping("/save")
-    public  ResponseEntity<List<KomponenBelanjaEntity>> save(@RequestBody List<KomponenBelanjaEntity> komponenList,
-                                                             @RequestParam Integer idKegiatan,
-                                                             @RequestParam Integer idSkpd,
-                                                             @RequestParam String tahunAnggaran,
-                                                             @RequestParam String kodeKegiatan,
-                                                             Principal principal
-                                   ) {
+    @PostMapping("/save/pegawai")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> savePegawai(@RequestBody List<KomponenBelanjaGetDto> komponenList,
+                                                            @RequestParam Integer idKegiatan,
+                                                            @RequestParam Integer idSkpd,
+                                                            @RequestParam String tahunAnggaran,
+                                                            @RequestParam String kodeKegiatan,
+                                                            Principal principal
+    ) {
 
-            List<KomponenBelanjaEntity> list = service.saveBelanjaPegawai(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, principal);
-            return new ResponseEntity<>(list, HttpStatus.OK);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "pegawai", principal);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PostMapping("/save/barang")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> saveBarang(@RequestBody List<KomponenBelanjaGetDto> komponenList,
+                                                            @RequestParam Integer idKegiatan,
+                                                            @RequestParam Integer idSkpd,
+                                                            @RequestParam String tahunAnggaran,
+                                                            @RequestParam String kodeKegiatan,
+                                                            Principal principal
+    ) {
+
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "barang", principal);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PostMapping("/save/modal")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> save(@RequestBody List<KomponenBelanjaGetDto> komponenList,
+                                                            @RequestParam Integer idKegiatan,
+                                                            @RequestParam Integer idSkpd,
+                                                            @RequestParam String tahunAnggaran,
+                                                            @RequestParam String kodeKegiatan,
+                                                            Principal principal
+    ) {
+
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "modal", principal);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/load/pegawai")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> loadPegawai(@RequestParam Integer idKegiatan, @RequestParam String tahunAngg) {
+        List<KomponenBelanjaGetDto> listPegawai = service.loadKomponen(idKegiatan, tahunAngg, "pegawai");
+        return new ResponseEntity<>(listPegawai, HttpStatus.OK);
+    }
+
+    @GetMapping("/load/barang")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> loadBarang(@RequestParam Integer idKegiatan, @RequestParam String tahunAngg) {
+        List<KomponenBelanjaGetDto> listBarang = service.loadKomponen(idKegiatan, tahunAngg, "barang");
+        return new ResponseEntity<>(listBarang, HttpStatus.OK);
+    }
+
+    @GetMapping("/load/modal")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> loadModal(@RequestParam Integer idKegiatan, @RequestParam String tahunAngg) {
+        List<KomponenBelanjaGetDto> listModal = service.loadKomponen(idKegiatan, tahunAngg, "modal");
+        return new ResponseEntity<>(listModal, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-by-id/{id}")
+    public ResponseEntity<KomponenBelanjaEditDto> getById(@PathVariable Integer id) {
+        KomponenBelanjaEditDto komponen = service.getById(id);
+        return new ResponseEntity<>(komponen, HttpStatus.OK);
+    }
+
+    @PostMapping("/edit-volume")
+    public ResponseEntity<?> editVolume(@RequestBody KomponenBelanjaEditDto komponen) {
+        service.editVolume(komponen);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
