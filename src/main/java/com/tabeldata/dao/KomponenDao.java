@@ -23,7 +23,7 @@ public class KomponenDao {
                 "C_KOMPONEN AS kodeKomponen, " +
                 "N_KOMPONEN AS namaKomponen, " +
                 "N_SATUAN AS namaSatuan, " +
-                "V_KOMPONEN_HARGA AS harga, " +
+                "V_KOMPONEN_HARGA AS komponenHarga, " +
                 "C_STATUS AS status, " +
                 "C_APPROVAL AS approval, " +
                 "C_AKTIF AS aktif, " +
@@ -48,7 +48,7 @@ public class KomponenDao {
                 komponen.setKodeKomponen(resultSet.getString("kodeKomponen"));
                 komponen.setNamaKomponen(resultSet.getString("namaKomponen"));
                 komponen.setNamaSatuan(resultSet.getString("namaSatuan"));
-                komponen.setHarga(resultSet.getBigDecimal("harga"));
+                komponen.setHarga(resultSet.getBigDecimal("komponenHarga"));
                 komponen.setStatus(resultSet.getString("status"));
                 komponen.setAppoval(resultSet.getBoolean("approval"));
                 komponen.setAktif(resultSet.getBoolean("aktif"));
