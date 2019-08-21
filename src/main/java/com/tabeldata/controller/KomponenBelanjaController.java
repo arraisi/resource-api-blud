@@ -4,6 +4,7 @@ import com.tabeldata.dto.KomponenBelanjaEditDto;
 import com.tabeldata.dto.KomponenBelanjaGetDto;
 import com.tabeldata.service.KomponenBelanjaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,11 @@ public class KomponenBelanjaController {
 
     @PostMapping("/save/pegawai")
     public ResponseEntity<List<KomponenBelanjaGetDto>> savePegawai(@RequestBody List<KomponenBelanjaGetDto> komponenList,
-                                                            @RequestParam Integer idKegiatan,
-                                                            @RequestParam Integer idSkpd,
-                                                            @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
-                                                            Principal principal
+                                                                   @RequestParam Integer idKegiatan,
+                                                                   @RequestParam Integer idSkpd,
+                                                                   @RequestParam String tahunAnggaran,
+                                                                   @RequestParam String kodeKegiatan,
+                                                                   Principal principal
     ) {
 
         List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "pegawai", principal);
@@ -33,11 +34,11 @@ public class KomponenBelanjaController {
 
     @PostMapping("/save/barang")
     public ResponseEntity<List<KomponenBelanjaGetDto>> saveBarang(@RequestBody List<KomponenBelanjaGetDto> komponenList,
-                                                            @RequestParam Integer idKegiatan,
-                                                            @RequestParam Integer idSkpd,
-                                                            @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
-                                                            Principal principal
+                                                                  @RequestParam Integer idKegiatan,
+                                                                  @RequestParam Integer idSkpd,
+                                                                  @RequestParam String tahunAnggaran,
+                                                                  @RequestParam String kodeKegiatan,
+                                                                  Principal principal
     ) {
 
         List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "barang", principal);
@@ -81,11 +82,28 @@ public class KomponenBelanjaController {
         return new ResponseEntity<>(komponen, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<KomponenBelanjaGetDto> getKomponenById(@PathVariable Integer id) {
+        KomponenBelanjaGetDto komponen = service.getKomponenBelanjaById(id);
+        return new ResponseEntity<>(komponen, HttpStatus.OK);
+    }
+
     @PostMapping("/edit-volume")
     public ResponseEntity<?> editVolume(@RequestBody KomponenBelanjaEditDto komponen) {
         service.editVolume(komponen);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/rpa/update")
+    public ResponseEntity<?> updateRpa(@RequestBody KomponenBelanjaGetDto komponen, Principal principal) {
+        try {
+            service.updateRpaKomponen(komponen, principal);
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

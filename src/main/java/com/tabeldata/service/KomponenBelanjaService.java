@@ -11,6 +11,7 @@ import com.tabeldata.entity.BelanjaLangsungEntity;
 import com.tabeldata.entity.KomponenEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,5 +129,13 @@ public class KomponenBelanjaService {
         dao.update(komponenGet);
     }
 
+    public KomponenBelanjaGetDto getKomponenBelanjaById(Integer id) {
+        return dao.getKomponenGetById(id);
+    }
+
+    public int updateRpaKomponen(KomponenBelanjaGetDto data, Principal principal) throws DataAccessException {
+        DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
+        return dao.updateRinci(data, penggunaLogin.getId(), new Timestamp(System.currentTimeMillis()));
+    }
 
 }
