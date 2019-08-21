@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -20,27 +21,27 @@ public class KomponenBelanjaController {
 
     @PostMapping("/save/pegawai")
     public ResponseEntity<List<KomponenBelanjaGetDto>> savePegawai(@RequestBody List<KomponenBelanjaGetDto> komponenList,
-                                                            @RequestParam Integer idKegiatan,
-                                                            @RequestParam Integer idSkpd,
-                                                            @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
-                                                            Principal principal
+                                                                   @RequestParam Integer idKegiatan,
+                                                                   @RequestParam Integer idSkpd,
+                                                                   @RequestParam String tahunAnggaran,
+                                                                   @RequestParam BigDecimal anggaran,
+                                                                   Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "pegawai", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "pegawai", anggaran, principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping("/save/barang")
     public ResponseEntity<List<KomponenBelanjaGetDto>> saveBarang(@RequestBody List<KomponenBelanjaGetDto> komponenList,
-                                                            @RequestParam Integer idKegiatan,
-                                                            @RequestParam Integer idSkpd,
-                                                            @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
-                                                            Principal principal
+                                                                  @RequestParam Integer idKegiatan,
+                                                                  @RequestParam Integer idSkpd,
+                                                                  @RequestParam String tahunAnggaran,
+                                                                  @RequestParam BigDecimal anggaran,
+                                                                  Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "barang", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "barang", anggaran, principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -49,11 +50,11 @@ public class KomponenBelanjaController {
                                                             @RequestParam Integer idKegiatan,
                                                             @RequestParam Integer idSkpd,
                                                             @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
+                                                            @RequestParam BigDecimal anggaran,
                                                             Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "modal", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "modal", anggaran, principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
