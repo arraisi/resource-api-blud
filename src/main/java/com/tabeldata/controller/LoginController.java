@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,10 +26,14 @@ public class LoginController {
         List<String> list;
         try {
             list = service.getTahunAnggaranByNrk(nrk);
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            if (!list.isEmpty()) {
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
