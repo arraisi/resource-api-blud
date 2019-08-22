@@ -24,7 +24,7 @@ public class LoginService {
 
         List<String> listTahunAnggaran = dao.getTahunAnggaranByNrk(nrk);
         if (listTahunAnggaran.isEmpty()) {
-            listTahunAnggaran.add(yearInString);
+            return listTahunAnggaran;
         }
         Integer listLengt = listTahunAnggaran.size();
         Integer maxTahunAnggaranPlus1 = Integer.parseInt(listTahunAnggaran.get(listLengt - 1)) + 1;
