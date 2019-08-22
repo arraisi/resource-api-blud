@@ -57,7 +57,7 @@ public class KinerjaController {
         }
     }
 
-    @PostMapping("/update")
+    @PostMapping("/updateAnggaran")
     public ResponseEntity<List<LoadKinerjaDto>> updateKinerja(
             @RequestParam String tahunAnggaran,
             @RequestParam Integer idKegiatan,

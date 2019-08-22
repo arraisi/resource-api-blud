@@ -29,9 +29,11 @@ public class BelanjaLangsungService {
         dao.saveBelanjaLangsung(belanjaLangsungEntity);
     }
 
-    public void saveByParam(Integer idKegiatan, String tahunAnggaran, Integer idSkpd, BigDecimal anggaran, String tipeKomponen, Principal principal) {
+    public void saveByParam(Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen, Principal principal) {
 
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
+
+        BigDecimal anggaran = dao.getAnggaranByTipeKomponen(idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
 
         Integer id = rbaNoMaxDao.getIdFromNoMax("TMRBABL");
         BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
@@ -74,20 +76,8 @@ public class BelanjaLangsungService {
         dao.saveBelanjaLangsung(belanjaLangsung);
     }
 
-    public void update(Integer id, BigDecimal anggaran, String tipeKomponen) {
-        switch (tipeKomponen) {
-            case "pegawai":
-                dao.updateBelanjaPegawai(id, anggaran);
-                break;
-            case "barang":
-                dao.updateBelanjaBarang(id, anggaran);
-                break;
-            case "modal":
-                dao.updateBelanjaModal(id, anggaran);
-                break;
-            default:
-                break;
-        }
+    public void updateAnggaran(Integer id, Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
+        dao.updateAnggaran(id, idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
     }
 
     public Integer getIdByParam(Integer idKegiatan, String tahunAnggaran, Integer idSkpd) {
@@ -100,6 +90,10 @@ public class BelanjaLangsungService {
 
     public BigDecimal getAnggaranByTipeKomponen(Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
         return dao.getAnggaranByTipeKomponen(idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
+    }
+
+    public BelanjaLangsungEntity getAllAnggaran (Integer id) {
+        return dao.getAllAnggaran(id);
     }
 
 }

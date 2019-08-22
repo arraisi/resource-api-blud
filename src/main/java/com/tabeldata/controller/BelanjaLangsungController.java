@@ -1,13 +1,11 @@
 package com.tabeldata.controller;
 
+import com.tabeldata.entity.BelanjaLangsungEntity;
 import com.tabeldata.service.BelanjaLangsungService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -48,4 +46,10 @@ public class BelanjaLangsungController {
         return new ResponseEntity<>(anggaran, HttpStatus.OK);
     }
 
+    @GetMapping("/anggaran/all")
+    public ResponseEntity<BelanjaLangsungEntity> getAllAnggaranByParam(@RequestParam Integer idKegiatan, @RequestParam String tahunAnggaran, @RequestParam Integer idSkpd) {
+        Integer idBelanjaLangsung = service.getIdByParam(idKegiatan, tahunAnggaran, idSkpd);
+        BelanjaLangsungEntity belanjaLangsungEntity = service.getAllAnggaran(idBelanjaLangsung);
+        return new ResponseEntity<>(belanjaLangsungEntity, HttpStatus.OK);
+    }
 }

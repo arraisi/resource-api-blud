@@ -74,41 +74,64 @@ public class BelanjaLangsungDao {
         jdbcTemplate.update(sql, parameterSource);
     }
 
-    public void updateBelanjaPegawai(Integer id, BigDecimal anggaran) {
-        String sql = "UPDATE TMRBABL\n" +
-                "SET    V_ANGG_DPABP    = :anggaranPegawai,\n" +
-                "       V_ANGG_TAPDBP   = :anggaranPegawai" +
+    public void updateAnggaran(Integer id, Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
+        String sqlPegawai = "UPDATE " +
+                "   TMRBABL SET\n" +
+                "               V_ANGG_DPABP = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.1%'),\n" +
+                "              V_ANGG_TAPDBP = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.1%')\n" +
+                "WHERE I_ID = :id";
+
+        String sqlBarang = "UPDATE " +
+                "   TMRBABL SET\n" +
+                "               V_ANGG_DPABBJ = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.2%'),\n" +
+                "              V_ANGG_TAPDBBJ = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.2%') \n" +
+                "WHERE I_ID = :id";
+
+        String sqlModal = "UPDATE " +
+                "   TMRBABL SET\n" +
+                "               V_ANGG_DPABM = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.3%'),\n" +
+                "              V_ANGG_TAPDBM = (SELECT " +
+                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
+                "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.3%') \n" +
                 "WHERE I_ID = :id";
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("id", id);
-        parameterSource.addValue("anggaranPegawai", anggaran);
-        jdbcTemplate.update(sql, parameterSource);
+        parameterSource.addValue("idKegiatan", idKegiatan);
+        parameterSource.addValue("tahunAngg", tahunAnggaran);
+        parameterSource.addValue("idSkpd", idSkpd);
+
+        switch (tipeKomponen) {
+            case "pegawai":
+                jdbcTemplate.update(sqlPegawai, parameterSource);
+                break;
+            case "barang":
+                jdbcTemplate.update(sqlBarang, parameterSource);
+                break;
+            case "modal":
+                jdbcTemplate.update(sqlModal, parameterSource);
+                break;
+            default:
+                break;
+        }
     }
 
-    public void updateBelanjaBarang(Integer id, BigDecimal anggaran) {
-        String sql = "UPDATE TMRBABL\n" +
-                "SET    V_ANGG_DPABBJ    = :anggaranBarang,\n" +
-                "       V_ANGG_TAPDBBJ   = :anggaranBarang" +
-                "WHERE I_ID = :id";
-
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("id", id);
-        parameterSource.addValue("anggaranBarang", anggaran);
-        jdbcTemplate.update(sql, parameterSource);
-    }
-
-    public void updateBelanjaModal(Integer id, BigDecimal anggaran) {
-        String sql = "UPDATE TMRBABL\n" +
-                "SET    V_ANGG_DPABM    = :anggaranModal,\n" +
-                "       V_ANGG_TAPDBM   = :anggaranModal" +
-                "WHERE I_ID = :id";
-
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("id", id);
-        parameterSource.addValue("anggaranModal", anggaran);
-        jdbcTemplate.update(sql, parameterSource);
-    }
 
     public Integer getIdByParam(Integer idKegiatan, String tahunAnggaran, Integer idSkpd) {
         String sql = "SELECT I_ID AS id FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
@@ -211,6 +234,28 @@ public class BelanjaLangsungDao {
         } catch (EmptyResultDataAccessException e) {
             return new BigDecimal(0);
         }
+    }
+
+    public BelanjaLangsungEntity getAllAnggaran(Integer id) {
+        String sql = "SELECT \n" +
+                "V_ANGG_DPABP   AS anggaranPegawai,\n" +
+                "V_ANGG_DPABBJ  AS anggaranBarang,\n" +
+                "V_ANGG_DPABM   AS anggaranModal \n" +
+                "FROM TMRBABL WHERE I_ID = :id";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("id", id);
+
+        return jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BelanjaLangsungEntity>() {
+            @Override
+            public BelanjaLangsungEntity mapRow(ResultSet resultSet, int i) throws SQLException {
+                BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
+                belanjaLangsung.setId(id);
+                belanjaLangsung.setAnggaranDpaBp(resultSet.getBigDecimal("anggaranPegawai"));
+                belanjaLangsung.setAnggaranDpaBbj(resultSet.getBigDecimal("anggaranBarang"));
+                belanjaLangsung.setAnggaranDpaBm(resultSet.getBigDecimal("anggaranModal"));
+                return belanjaLangsung;
+            }
+        });
     }
 
 }

@@ -3,15 +3,20 @@ package com.tabeldata.dao;
 import com.tabeldata.dto.KomponenBelanjaEditDto;
 import com.tabeldata.dto.KomponenBelanjaGetDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections15.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -272,39 +277,6 @@ public class KomponenBelanjaDao {
         jdbcTemplate.update(sql, parameterSource);
     }
 
-    public Integer getNoUrut(Integer idKegiatan, String tahunAnggaran, Integer idBas) {
-        String query = "SELECT I_ANGG_NOURUT + 1 AS noUrut FROM TMRBABLRINCI WHERE I_IDKEGIATAN = :idKegiatan " +
-                "AND C_ANGG_TAHUN = :tahunAngg AND I_IDBAS = :idBas";
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("idKegiatan", idKegiatan);
-        parameterSource.addValue("tahunAngg", tahunAnggaran);
-        parameterSource.addValue("idBas", idBas);
-
-
-        List<Integer> noUrut = jdbcTemplate.query(query, parameterSource, new RowMapper<Integer>() {
-            public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
-                return resultSet.getInt("noUrut");
-            }
-        });
-
-        if (!noUrut.isEmpty()) {
-            return noUrut.get(noUrut.size() - 1);
-        } else {
-            return 1;
-        }
-
-    }
-
-    public void updateNoUrut(Integer updateId, Integer id) {
-        String query = "UPDATE TMRBABLRINCI SET I_ANGG_NOURUT = :updateId  WHERE I_ID = :id";
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("updateId", updateId);
-        parameterSource.addValue("id", id);
-
-        jdbcTemplate.update(query, parameterSource);
-
-    }
-
     public List<KomponenBelanjaGetDto> listByParamater(Integer idKegiatan, String tahungAngg, String tipeKomponen) {
         String query = "SELECT\n" +
                 "RINCI.I_ID                   AS idRinci, \n" +
@@ -436,6 +408,11 @@ public class KomponenBelanjaDao {
 
     public KomponenBelanjaGetDto getKomponenGetById(Integer id) {
         String sql = "SELECT\n" +
+                "TRB.N_AKUN                   AS namaAkun, \n" +
+                "TRB.C_AKUN                   AS kodeAkun, \n" +
+                "TRK.C_KOMPONEN               AS kodeKomponen, \n" +
+                "TRK.N_KOMPONEN               AS namaKomponen, \n" +
+                "TRK.N_SATUAN                 AS satuan, \n" +
                 "RINCI.I_ID                   AS idRinci, \n" +
                 "RINCI.I_IDKEGIATAN           AS idKegiatan,\n" +
                 "RINCI.C_ANGG_TAHUN           AS tahunAngg,\n" +
@@ -483,7 +460,10 @@ public class KomponenBelanjaDao {
                 "RINCI.V_RPA_BULAN10          AS rpaBulan10,\n" +
                 "RINCI.V_RPA_BULAN11          AS rpaBulan11,\n" +
                 "RINCI.V_RPA_BULAN12          AS rpaBulan12\n" +
-                "FROM TMRBABLRINCI RINCI WHERE RINCI.I_ID = :idRinci";
+                "FROM TMRBABLRINCI RINCI \n" +
+                "JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID\n" +
+                "JOIN TRBASKOMPONEN TRK ON RINCI.I_IDBASKOMPONEN = TRK.I_ID\n" +
+                "WHERE RINCI.I_ID = :idRinci";
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("idRinci", id);
@@ -537,6 +517,10 @@ public class KomponenBelanjaDao {
             komponenBelanja.setRpaBulan10(resultSet.getBigDecimal("rpaBulan10"));
             komponenBelanja.setRpaBulan11(resultSet.getBigDecimal("rpaBulan11"));
             komponenBelanja.setRpaBulan12(resultSet.getBigDecimal("rpaBulan12"));
+            komponenBelanja.setKodeAkun(resultSet.getString("kodeAkun"));
+            komponenBelanja.setNamaAkun(resultSet.getString("namaAkun"));
+            komponenBelanja.setKodeKomponen(resultSet.getString("kodeKomponen"));
+            komponenBelanja.setNamaKomponen(resultSet.getString("namaKomponen"));
             return komponenBelanja;
         });
     }
@@ -571,10 +555,10 @@ public class KomponenBelanjaDao {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("id", id);
 
-        return  jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<KomponenBelanjaEditDto>() {
+        return jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<KomponenBelanjaEditDto>() {
             @Override
             public KomponenBelanjaEditDto mapRow(ResultSet resultSet, int i) throws SQLException {
-                KomponenBelanjaEditDto komponen =  new KomponenBelanjaEditDto();
+                KomponenBelanjaEditDto komponen = new KomponenBelanjaEditDto();
                 komponen.setId(resultSet.getInt("id"));
                 komponen.setNamaAkun(resultSet.getString("namaAkun"));
                 komponen.setKodeAkun(resultSet.getString("kodeAkun"));
@@ -599,6 +583,52 @@ public class KomponenBelanjaDao {
             }
         });
     }
+
+    public int updateRinci(KomponenBelanjaGetDto data, Integer createdBy, Timestamp createdDate) throws DataAccessException {
+        String sql = "UPDATE TMRBABLRINCI\n" +
+                "SET V_RPA_BULAN01 = :rpaBulan1,\n" +
+                "    V_RPA_BULAN02 = :rpaBulan2,\n" +
+                "    V_RPA_BULAN03 = :rpaBulan3,\n" +
+                "    V_RPA_BULAN04 = :rpaBulan4,\n" +
+                "    V_RPA_BULAN05 = :rpaBulan5,\n" +
+                "    V_RPA_BULAN06 = :rpaBulan6,\n" +
+                "    V_RPA_BULAN07 = :rpaBulan7,\n" +
+                "    V_RPA_BULAN08 = :rpaBulan8,\n" +
+                "    V_RPA_BULAN09 = :rpaBulan9,\n" +
+                "    V_RPA_BULAN10 = :rpaBulan10,\n" +
+                "    V_RPA_BULAN11 = :rpaBulan11,\n" +
+                "    V_RPA_BULAN12 = :rpaBulan12,\n" +
+                "    I_PGUN_UBAH   = :createdBy,\n" +
+                "    D_REKAM_UBAH  = :createdDate\n" +
+                "WHERE I_ID = :vId";
+        Map<String, Object> params = new HashedMap<>();
+        params.put("rpaBulan1", data.getRpaBulan1());
+        params.put("rpaBulan2", data.getRpaBulan2());
+        params.put("rpaBulan3", data.getRpaBulan3());
+        params.put("rpaBulan4", data.getRpaBulan4());
+        params.put("rpaBulan5", data.getRpaBulan5());
+        params.put("rpaBulan6", data.getRpaBulan6());
+        params.put("rpaBulan7", data.getRpaBulan7());
+        params.put("rpaBulan8", data.getRpaBulan8());
+        params.put("rpaBulan9", data.getRpaBulan9());
+        params.put("rpaBulan10", data.getRpaBulan10());
+        params.put("rpaBulan11", data.getRpaBulan11());
+        params.put("rpaBulan12", data.getRpaBulan12());
+        params.put("createdBy", createdBy);
+        params.put("createdDate", createdDate);
+        params.put("vId", data.getId());
+        return this.jdbcTemplate.update(sql, params);
+    }
+
+
+    public void updateAnggaranKegiatan(Integer id, BigDecimal anggaran) {
+        String sql = "UPDATE TMRBAKEGIATAN SET V_ANGG_TAPD = :anggaran, V_ANGG_DPA = :anggaran WHERE I_ID = :id";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("id", id);
+        parameterSource.addValue("anggaran", anggaran);
+        jdbcTemplate.update(sql, parameterSource);
+    }
+
 
 
 }

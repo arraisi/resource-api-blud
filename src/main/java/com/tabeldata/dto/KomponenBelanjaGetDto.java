@@ -60,4 +60,5 @@ public class KomponenBelanjaGetDto {
     private BigDecimal rpaBulan11;
     private BigDecimal rpaBulan12;
     private String kodeAkun;
+    private String namaAkun;
 }
