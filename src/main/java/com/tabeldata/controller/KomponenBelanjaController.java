@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -24,11 +25,10 @@ public class KomponenBelanjaController {
                                                                    @RequestParam Integer idKegiatan,
                                                                    @RequestParam Integer idSkpd,
                                                                    @RequestParam String tahunAnggaran,
-                                                                   @RequestParam String kodeKegiatan,
                                                                    Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "pegawai", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "pegawai", principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -37,24 +37,22 @@ public class KomponenBelanjaController {
                                                                   @RequestParam Integer idKegiatan,
                                                                   @RequestParam Integer idSkpd,
                                                                   @RequestParam String tahunAnggaran,
-                                                                  @RequestParam String kodeKegiatan,
                                                                   Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "barang", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "barang", principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping("/save/modal")
-    public ResponseEntity<List<KomponenBelanjaGetDto>> save(@RequestBody List<KomponenBelanjaGetDto> komponenList,
+    public ResponseEntity<List<KomponenBelanjaGetDto>> saveModal(@RequestBody List<KomponenBelanjaGetDto> komponenList,
                                                             @RequestParam Integer idKegiatan,
                                                             @RequestParam Integer idSkpd,
                                                             @RequestParam String tahunAnggaran,
-                                                            @RequestParam String kodeKegiatan,
                                                             Principal principal
     ) {
 
-        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, kodeKegiatan, "modal", principal);
+        List<KomponenBelanjaGetDto> list = service.saveBelanja(komponenList, idKegiatan, idSkpd, tahunAnggaran, "modal", principal);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -88,14 +86,28 @@ public class KomponenBelanjaController {
         return new ResponseEntity<>(komponen, HttpStatus.OK);
     }
 
-    @PostMapping("/edit-volume")
-    public ResponseEntity<?> editVolume(@RequestBody KomponenBelanjaEditDto komponen) {
-        service.editVolume(komponen);
+    @PostMapping("/edit-volume/pegawai")
+    public ResponseEntity<?> editVolumePegawai(@RequestBody KomponenBelanjaEditDto komponen) {
+        service.editVolume(komponen, "pegawai");
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/rpa/update")
+    @PostMapping("/edit-volume/barang")
+    public ResponseEntity<?> editVolumeBarang(@RequestBody KomponenBelanjaEditDto komponen) {
+        service.editVolume(komponen, "barang");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/edit-volume/modal")
+    public ResponseEntity<?> editVolumeModal(@RequestBody KomponenBelanjaEditDto komponen) {
+        service.editVolume(komponen, "modal");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/rpa/updateAnggaran")
     public ResponseEntity<?> updateRpa(@RequestBody KomponenBelanjaGetDto komponen, Principal principal) {
         try {
             service.updateRpaKomponen(komponen, principal);
@@ -104,6 +116,13 @@ public class KomponenBelanjaController {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/update-anggaran-kegiatan/{id}")
+    public ResponseEntity<?> updateAnggaranKegiatan(@PathVariable Integer id, @RequestParam BigDecimal anggaran) {
+        service.updateAnggaranKegiatan(id, anggaran);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 }

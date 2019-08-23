@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -274,39 +275,6 @@ public class KomponenBelanjaDao {
         parameterSource.addValue("rpaBulan12", data.getRpaBulan12());
 
         jdbcTemplate.update(sql, parameterSource);
-    }
-
-    public Integer getNoUrut(Integer idKegiatan, String tahunAnggaran, Integer idBas) {
-        String query = "SELECT I_ANGG_NOURUT + 1 AS noUrut FROM TMRBABLRINCI WHERE I_IDKEGIATAN = :idKegiatan " +
-                "AND C_ANGG_TAHUN = :tahunAngg AND I_IDBAS = :idBas";
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("idKegiatan", idKegiatan);
-        parameterSource.addValue("tahunAngg", tahunAnggaran);
-        parameterSource.addValue("idBas", idBas);
-
-
-        List<Integer> noUrut = jdbcTemplate.query(query, parameterSource, new RowMapper<Integer>() {
-            public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
-                return resultSet.getInt("noUrut");
-            }
-        });
-
-        if (!noUrut.isEmpty()) {
-            return noUrut.get(noUrut.size() - 1);
-        } else {
-            return 1;
-        }
-
-    }
-
-    public void updateNoUrut(Integer updateId, Integer id) {
-        String query = "UPDATE TMRBABLRINCI SET I_ANGG_NOURUT = :updateId  WHERE I_ID = :id";
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("updateId", updateId);
-        parameterSource.addValue("id", id);
-
-        jdbcTemplate.update(query, parameterSource);
-
     }
 
     public List<KomponenBelanjaGetDto> listByParamater(Integer idKegiatan, String tahungAngg, String tipeKomponen) {
@@ -582,7 +550,7 @@ public class KomponenBelanjaDao {
                 "FROM TMRBABLRINCI RINCI \n" +
                 "JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID\n" +
                 "JOIN TRBASKOMPONEN TRK ON RINCI.I_IDBASKOMPONEN = TRK.I_ID\n" +
-                "WHERE RINCI.I_ID = 795";
+                "WHERE RINCI.I_ID = :id";
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("id", id);
@@ -651,6 +619,16 @@ public class KomponenBelanjaDao {
         params.put("vId", data.getId());
         return this.jdbcTemplate.update(sql, params);
     }
+
+
+    public void updateAnggaranKegiatan(Integer id, BigDecimal anggaran) {
+        String sql = "UPDATE TMRBAKEGIATAN SET V_ANGG_TAPD = :anggaran, V_ANGG_DPA = :anggaran WHERE I_ID = :id";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("id", id);
+        parameterSource.addValue("anggaran", anggaran);
+        jdbcTemplate.update(sql, parameterSource);
+    }
+
 
 
 }

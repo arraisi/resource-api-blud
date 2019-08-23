@@ -1,13 +1,10 @@
 package com.tabeldata.service;
 
-import com.tabeldata.dao.BelanjaLangsungDao;
-import com.tabeldata.dao.KomponenBelanjaDao;
-import com.tabeldata.dao.KomponenDao;
-import com.tabeldata.dao.RbaNoMaxDao;
+import com.tabeldata.dao.*;
 import com.tabeldata.dto.DataPenggunaLogin;
+import com.tabeldata.dto.KegiatanGetDto;
 import com.tabeldata.dto.KomponenBelanjaEditDto;
 import com.tabeldata.dto.KomponenBelanjaGetDto;
-import com.tabeldata.entity.BelanjaLangsungEntity;
 import com.tabeldata.entity.KomponenEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -31,7 +29,10 @@ public class KomponenBelanjaService {
     KomponenDao komponenDao;
 
     @Autowired
-    BelanjaLangsungDao belanjaLangsungDao;
+    KegiatanDao kegiatanDao;
+
+    @Autowired
+    BelanjaLangsungService belanjaLangsungService;
 
     @Autowired
     DataPenggunaLoginService dataPenggunaLoginService;
@@ -44,7 +45,6 @@ public class KomponenBelanjaService {
                                                    Integer idKegiatan,
                                                    Integer idSkpd,
                                                    String tahunAnggaran,
-                                                   String kodeKegiatan,
                                                    String tipeKomponen,
                                                    Principal principal) {
 
@@ -52,7 +52,7 @@ public class KomponenBelanjaService {
         listAll.addAll(komponenList);
         Integer noUrut = 0;
 
-        Integer idBelanjaLangsung = rbaNoMaxDao.getIdFromNoMax("TMRBABL");
+//        BigDecimal anggaran = belanjaLangsungService.getAnggaranByTipeKomponen(idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
 
         for (KomponenBelanjaGetDto komponenBelanja : listAll) {
             noUrut += 1;
@@ -66,14 +66,18 @@ public class KomponenBelanjaService {
                 Integer id = rbaNoMaxDao.getIdFromNoMax("TMRBABLRINCI");
 
                 KomponenEntity komponen = komponenDao.getById(komponenBelanja.getIdBasKomponen());
+                KegiatanGetDto kegiatan = kegiatanDao.getKegiatanByID(idKegiatan);
                 DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
 
                 komponenBelanja.setId(id);
-                komponenBelanja.setIdKegiatan(idKegiatan);
+
                 komponenBelanja.setTahunAnggaran(tahunAnggaran);
                 komponenBelanja.setIdAnggaranNoUrut(noUrut);
                 komponenBelanja.setIdSkpd(idSkpd);
-                komponenBelanja.setKodeKegiatan(kodeKegiatan);
+
+                komponenBelanja.setIdKegiatan(idKegiatan);
+                komponenBelanja.setKodeKegiatan(kegiatan.getKodeKegiatan());
+
 
                 komponenBelanja.setKodeKomponen(komponen.getKodeKomponen());
                 komponenBelanja.setNamaKomponen(komponen.getNamaKomponen());
@@ -87,14 +91,16 @@ public class KomponenBelanjaService {
                 komponenBelanja.setTglPenggunaRekam(new Timestamp(System.currentTimeMillis()));
 
                 rbaNoMaxDao.updateIdNoMax(id, "TMRBABLRINCI");
+//                anggaran = anggaran.add(komponenBelanja.getKomponenHarga());
                 dao.saveKomponenBelanja(komponenBelanja);
             }
 
-            BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
-            belanjaLangsung.setId(idBelanjaLangsung);
-            belanjaLangsung.setIdKegiatan(idKegiatan);
-            belanjaLangsung.setTahunAnggaran(tahunAnggaran);
-            belanjaLangsung.setIdSkpd(idSkpd);
+            Integer idBelanjaLangsung = belanjaLangsungService.getIdByParam(idKegiatan, tahunAnggaran, idSkpd);
+            if (idBelanjaLangsung == null) {
+                belanjaLangsungService.saveByParam(idKegiatan, tahunAnggaran, idSkpd, tipeKomponen, principal);
+            } else {
+                belanjaLangsungService.updateAnggaran(idBelanjaLangsung, idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
+            }
 
         }
 
@@ -110,7 +116,7 @@ public class KomponenBelanjaService {
     }
 
     @Transactional
-    public void editVolume(KomponenBelanjaEditDto komponenEdit) {
+    public void editVolume(KomponenBelanjaEditDto komponenEdit, String tipeKomponen) {
 
         KomponenBelanjaGetDto komponenGet = dao.getKomponenGetById(komponenEdit.getId());
         komponenGet.setAnggaranDpa(komponenEdit.getTotalHarga());
@@ -128,6 +134,9 @@ public class KomponenBelanjaService {
         komponenGet.setEntryAnggaranRinci(komponenEdit.getKeterangan());
 
         dao.update(komponenGet);
+        Integer idBelanjaLangsung = belanjaLangsungService.getIdByParam(komponenGet.getIdKegiatan(), komponenGet.getTahunAnggaran(), komponenGet.getIdSkpd());
+
+        belanjaLangsungService.updateAnggaran(idBelanjaLangsung, komponenGet.getIdKegiatan(), komponenGet.getTahunAnggaran(), komponenGet.getIdSkpd(), tipeKomponen);
     }
 
     public KomponenBelanjaGetDto getKomponenBelanjaById(Integer id) {
@@ -138,6 +147,11 @@ public class KomponenBelanjaService {
     public int updateRpaKomponen(KomponenBelanjaGetDto data, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         return dao.updateRinci(data, penggunaLogin.getId(), new Timestamp(System.currentTimeMillis()));
+    }
+
+    @Transactional
+    public void updateAnggaranKegiatan(Integer id, BigDecimal anggaran) {
+        dao.updateAnggaranKegiatan(id, anggaran);
     }
 
 }

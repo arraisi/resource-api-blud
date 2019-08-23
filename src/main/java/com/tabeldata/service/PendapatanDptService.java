@@ -44,7 +44,7 @@ public class PendapatanDptService {
     }
 
     /**
-     * Method untuk update Pendapatan from Rincian Pendapatan
+     * Method untuk updateAnggaran Pendapatan from Rincian Pendapatan
      */
     @Transactional
     public PendapatanDptEntity updateAnggaranPendapatanFromRincian(PendapatanDptEntity value, Principal principal) {
@@ -57,7 +57,7 @@ public class PendapatanDptService {
     }
 
     /**
-     * Method untuk update Semua Pendapatan By AKB
+     * Method untuk updateAnggaran Semua Pendapatan By AKB
      */
     @Transactional
     public PendapatanDptEntity updateAkbPendapatan(PendapatanDptEntity pendapatan, Principal principal) {

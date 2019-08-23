@@ -253,7 +253,7 @@ public class RicianPendapatanDao {
     }
 
     /**
-     * Method untuk update rincian pendapatan By ID dan By ID DPT
+     * Method untuk updateAnggaran rincian pendapatan By ID dan By ID DPT
      */
     public void updateRincianPendapatanByIdDanIdDpt(RincianPendapatanEntity value) {
         String sql = "UPDATE\n" +
