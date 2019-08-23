@@ -37,8 +37,8 @@ public class ProgramController {
      * Get List Program By ID Urusan
      */
     @GetMapping("/list/by-id-urusan/{idUrusan}")
-    public ResponseEntity<List<ProgramEntity>> getListProgramByIdUrusan(@PathVariable Integer idUrusan, @RequestParam String tahunAnggaran) {
-        List<ProgramEntity> program = service.getListProgramByIdUrusan(idUrusan, tahunAnggaran);
+    public ResponseEntity<List<ProgramEntity>> getListProgramByIdUrusan(@PathVariable Integer idUrusan, @RequestParam String tahunAnggaran, @RequestParam Integer idSkpd) {
+        List<ProgramEntity> program = service.getListProgramByIdUrusan(idUrusan, tahunAnggaran, idSkpd);
         if (!program.isEmpty()) {
             return new ResponseEntity<>(program, HttpStatus.OK);
         } else {

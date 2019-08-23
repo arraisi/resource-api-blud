@@ -1,5 +1,6 @@
 package com.tabeldata.service;
 
+import com.tabeldata.dao.KegiatanDao;
 import com.tabeldata.dao.ProgramDao;
 import com.tabeldata.entity.ProgramEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,9 @@ public class ProgramService {
     /**
      * Get List Program By ID URUSAN
      */
-    public List<ProgramEntity> getListProgramByIdUrusan(Integer idUrusan, String tahunAnggaran) {
-        List<ProgramEntity> program = dao.getListProgramByIdUrusan(idUrusan, tahunAnggaran);
+    public List<ProgramEntity> getListProgramByIdUrusan(Integer idUrusan, String tahunAnggaran, Integer idSkpd) {
+        List<Integer> idProgram = dao.getIDProgramByIdSkpdDanTahunAnggaran(idSkpd, tahunAnggaran);
+        List<ProgramEntity> program = dao.getListProgramByIdUrusan(idUrusan, tahunAnggaran, idProgram);
         return program;
     }
 

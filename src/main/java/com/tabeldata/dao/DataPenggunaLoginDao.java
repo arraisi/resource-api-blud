@@ -54,7 +54,7 @@ public class DataPenggunaLoginDao {
                         rs.getString("I_PEG_NIP"),
                         rs.getString("N_PEG"),
                         rs.getString("N_PEG_JABATAN"),
-                        rs.getString("I_IDSKPD")
+                        rs.getInt("I_IDSKPD")
                 );
             }
         });

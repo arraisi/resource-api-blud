@@ -1,6 +1,7 @@
 package com.tabeldata.service;
 
 import com.tabeldata.dao.LoginDao;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 public class LoginService {
 
@@ -27,6 +29,7 @@ public class LoginService {
             return listTahunAnggaran;
         }
         Integer listLengt = listTahunAnggaran.size();
+        log.info("TAHUN ANGGARAN: {}, LENGT: {}", listTahunAnggaran, listLengt);
         Integer maxTahunAnggaranPlus1 = Integer.parseInt(listTahunAnggaran.get(listLengt - 1)) + 1;
         Integer minTahunAnggaranMinus1 = Integer.parseInt(listTahunAnggaran.get(0)) - 1;
         listTahunAnggaran.add(0, minTahunAnggaranMinus1.toString());
