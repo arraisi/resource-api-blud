@@ -43,6 +43,12 @@ public class LoadKomponenDao {
             "        TRK.C_AKTIF = '1'\n" +
             "        AND TRK.C_APPROVAL = '1'\n" +
             "        AND TRK.C_AKUN LIKE '5.2.1%'\n" +
+            "        AND TRK.I_ID NOT IN (" +
+            "           SELECT RINCI.I_IDBASKOMPONEN FROM " +
+            "               TMRBABLRINCI RINCI JOIN TRBASKOMPONEN TRK ON RINCI.I_IDBASKOMPONEN = TRK.I_ID\n" +
+            "                                  JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID\n" +
+            "        WHERE C_ANGG_TAHUN = :vTahunAnggaran AND I_IDSKPD = :vIdSkpd AND TRB.C_AKUN LIKE '5.2.1%'" +
+            "       )" +
             "    )\n" +
             "  AND (\n" +
             "        TBS.C_AKTIF = '1'\n" +
@@ -79,6 +85,12 @@ public class LoadKomponenDao {
             "        TRK.C_AKTIF = '1'\n" +
             "        AND TRK.C_APPROVAL = '1'\n" +
             "        AND TRK.C_AKUN LIKE '5.2.2%'\n" +
+            "        AND TRK.I_ID NOT IN (" +
+            "           SELECT RINCI.I_IDBASKOMPONEN FROM " +
+            "               TMRBABLRINCI RINCI JOIN TRBASKOMPONEN TRK ON RINCI.I_IDBASKOMPONEN = TRK.I_ID\n" +
+            "                                  JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID\n" +
+            "        WHERE C_ANGG_TAHUN = :vTahunAnggaran AND I_IDSKPD = :vIdSkpd AND TRB.C_AKUN LIKE '5.2.2%'" +
+            "       )" +
             "    )\n" +
             "  AND (\n" +
             "        TBS.C_AKTIF = '1'\n" +
@@ -116,6 +128,12 @@ public class LoadKomponenDao {
             "        TRK.C_AKTIF = '1'\n" +
             "        AND TRK.C_APPROVAL = '1'\n" +
             "        AND TRK.C_AKUN LIKE '5.2.3%'\n" +
+            "        AND TRK.I_ID NOT IN (" +
+            "           SELECT RINCI.I_IDBASKOMPONEN FROM " +
+            "               TMRBABLRINCI RINCI JOIN TRBASKOMPONEN TRK ON RINCI.I_IDBASKOMPONEN = TRK.I_ID\n" +
+            "                                  JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID\n" +
+            "        WHERE C_ANGG_TAHUN = :vTahunAnggaran AND I_IDSKPD = :vIdSkpd AND TRB.C_AKUN LIKE '5.2.3%'" +
+            "       )" +
             "    )\n" +
             "  AND (\n" +
             "        TBS.C_AKTIF = '1'\n" +
