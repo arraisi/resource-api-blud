@@ -155,4 +155,21 @@ public class KomponenBelanjaService {
         dao.updateAnggaranKegiatan(id, anggaran);
     }
 
+    @Transactional
+    public List<KomponenBelanjaGetDto> deleteKomponenFromRinci(Integer idKomponen, Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
+        dao.deleteKomponenFromRinci(idKomponen);
+        List<KomponenBelanjaGetDto> komponenGetList = dao.listByParamater(idKegiatan, tahunAnggaran, tipeKomponen);
+        Integer noUrut = 0;
+        for (KomponenBelanjaGetDto komponen : komponenGetList) {
+            noUrut += 1;
+            komponen.setIdAnggaranNoUrut(noUrut);
+            dao.update(komponen);
+        }
+
+        Integer idBelanjaLangsung = belanjaLangsungService.getIdByParam(idKegiatan, tahunAnggaran, idSkpd);
+        belanjaLangsungService.updateAnggaran(idBelanjaLangsung, idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
+
+        return dao.listByParamater(idKegiatan, tahunAnggaran, tipeKomponen);
+    }
+
 }

@@ -125,4 +125,33 @@ public class KomponenBelanjaController {
 
     }
 
+    @DeleteMapping("/delete/pegawai/{id}")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> deleteKomponenPegawaiFromRinci(@PathVariable Integer id,
+                                                     @RequestParam Integer idKegiatan,
+                                                     @RequestParam String tahunAnggaran,
+                                                     @RequestParam Integer idSkpd) {
+
+        List<KomponenBelanjaGetDto> list = service.deleteKomponenFromRinci(id, idKegiatan, tahunAnggaran, idSkpd, "pegawai");
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/barang/{id}")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> deleteKomponenBarangFromRinci(@PathVariable Integer id,
+                                                                               @RequestParam Integer idKegiatan,
+                                                                               @RequestParam String tahunAnggaran,
+                                                                               @RequestParam Integer idSkpd) {
+
+        List<KomponenBelanjaGetDto> list = service.deleteKomponenFromRinci(id, idKegiatan, tahunAnggaran, idSkpd, "barang");
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/modal/{id}")
+    public ResponseEntity<List<KomponenBelanjaGetDto>> deleteKomponenModalFromRinci(@PathVariable Integer id,
+                                                                               @RequestParam Integer idKegiatan,
+                                                                               @RequestParam String tahunAnggaran,
+                                                                               @RequestParam Integer idSkpd) {
+
+        List<KomponenBelanjaGetDto> list = service.deleteKomponenFromRinci(id, idKegiatan, tahunAnggaran, idSkpd, "modal");
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }

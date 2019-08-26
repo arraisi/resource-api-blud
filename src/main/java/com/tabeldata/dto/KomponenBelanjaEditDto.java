@@ -14,6 +14,7 @@ public class KomponenBelanjaEditDto {
     private Integer id;
     private String namaAkun;
     private String kodeAkun;
+    private Integer idKomponen;
     private String kodeKomponen;
     private String namaKomponen;
     private String merk;

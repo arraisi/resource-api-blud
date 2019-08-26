@@ -530,6 +530,7 @@ public class KomponenBelanjaDao {
                 "RINCI.I_ID                 AS id, \n" +
                 "TRB.N_AKUN                 AS namaAkun, \n" +
                 "TRB.C_AKUN                 AS kodeAkun, \n" +
+                "TRK.I_ID                   AS idKomponen, \n" +
                 "TRK.C_KOMPONEN             AS kodeKomponen, \n" +
                 "TRK.N_KOMPONEN             AS namaKomponen, \n" +
                 "TRK.N_SATUAN               AS satuan, \n" +
@@ -565,6 +566,7 @@ public class KomponenBelanjaDao {
                 komponen.setId(resultSet.getInt("id"));
                 komponen.setNamaAkun(resultSet.getString("namaAkun"));
                 komponen.setKodeAkun(resultSet.getString("kodeAkun"));
+                komponen.setIdKomponen(resultSet.getInt("idKomponen"));
                 komponen.setKodeKomponen(resultSet.getString("kodeKomponen"));
                 komponen.setNamaKomponen(resultSet.getString("namaKomponen"));
                 komponen.setSatuan(resultSet.getString("satuan"));
@@ -635,6 +637,11 @@ public class KomponenBelanjaDao {
         jdbcTemplate.update(sql, parameterSource);
     }
 
-
+    public void deleteKomponenFromRinci(Integer idKomponen) {
+        String sql = "DELETE FROM TMRBABLRINCI WHERE I_IDBASKOMPONEN = :idBasKomponen";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("idBasKomponen", idKomponen);
+        jdbcTemplate.update(sql, parameterSource);
+    }
 
 }
