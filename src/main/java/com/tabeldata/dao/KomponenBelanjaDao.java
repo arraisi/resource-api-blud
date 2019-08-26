@@ -533,6 +533,9 @@ public class KomponenBelanjaDao {
                 "TRK.C_KOMPONEN             AS kodeKomponen, \n" +
                 "TRK.N_KOMPONEN             AS namaKomponen, \n" +
                 "TRK.N_SATUAN               AS satuan, \n" +
+                "TRK.C_NONPAJAK             AS nonPajak, \n" +
+                "RINCI.V_ANGG_DPA           AS totalHarga, \n" +
+                "RINCI.E_ANGG_RINCI         AS keterangan, \n" +
                 "RINCI.N_KOMPONEN_SPEK      AS spek, \n" +
                 "RINCI.N_KOMPONEN_MERK      AS merk,\n" +
                 "RINCI.V_KOMPONEN_HARGA     AS komponenHarga,\n" +
@@ -565,6 +568,9 @@ public class KomponenBelanjaDao {
                 komponen.setKodeKomponen(resultSet.getString("kodeKomponen"));
                 komponen.setNamaKomponen(resultSet.getString("namaKomponen"));
                 komponen.setSatuan(resultSet.getString("satuan"));
+                komponen.setNonPajak(resultSet.getInt("nonPajak"));
+                komponen.setTotalHarga(resultSet.getBigDecimal("totalHarga"));
+                komponen.setKeterangan(resultSet.getString("keterangan"));
                 komponen.setSpek(resultSet.getString("spek"));
                 komponen.setMerk(resultSet.getString("merk"));
                 komponen.setKomponenHarga(resultSet.getBigDecimal("komponenHarga"));

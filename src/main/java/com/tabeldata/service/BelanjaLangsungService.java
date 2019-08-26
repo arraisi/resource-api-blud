@@ -43,6 +43,7 @@ public class BelanjaLangsungService {
         belanjaLangsung.setIdSkpd(idSkpd);
         belanjaLangsung.setIdPenggunaRekam(penggunaLogin.getId());
         belanjaLangsung.setTglPenggunaRekam(new Timestamp(System.currentTimeMillis()));
+        rbaNoMaxDao.updateIdNoMax(id, "TMRBABL");
 
         switch (tipeKomponen) {
             case "pegawai":

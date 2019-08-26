@@ -245,17 +245,26 @@ public class BelanjaLangsungDao {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("id", id);
 
-        return jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BelanjaLangsungEntity>() {
-            @Override
-            public BelanjaLangsungEntity mapRow(ResultSet resultSet, int i) throws SQLException {
-                BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
-                belanjaLangsung.setId(id);
-                belanjaLangsung.setAnggaranDpaBp(resultSet.getBigDecimal("anggaranPegawai"));
-                belanjaLangsung.setAnggaranDpaBbj(resultSet.getBigDecimal("anggaranBarang"));
-                belanjaLangsung.setAnggaranDpaBm(resultSet.getBigDecimal("anggaranModal"));
-                return belanjaLangsung;
-            }
-        });
+        try {
+            return jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BelanjaLangsungEntity>() {
+                @Override
+                public BelanjaLangsungEntity mapRow(ResultSet resultSet, int i) throws SQLException {
+                    BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
+                    belanjaLangsung.setId(id);
+                    belanjaLangsung.setAnggaranDpaBp(resultSet.getBigDecimal("anggaranPegawai"));
+                    belanjaLangsung.setAnggaranDpaBbj(resultSet.getBigDecimal("anggaranBarang"));
+                    belanjaLangsung.setAnggaranDpaBm(resultSet.getBigDecimal("anggaranModal"));
+                    return belanjaLangsung;
+                }
+            });
+        } catch (EmptyResultDataAccessException e) {
+                    BelanjaLangsungEntity belanjaLangsung = new BelanjaLangsungEntity();
+                    belanjaLangsung.setId(id);
+                    belanjaLangsung.setAnggaranDpaBp(new BigDecimal(0));
+                    belanjaLangsung.setAnggaranDpaBbj(new BigDecimal(0));
+                    belanjaLangsung.setAnggaranDpaBm(new BigDecimal(0));
+                    return belanjaLangsung;
+        }
     }
 
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +20,7 @@ public class KomponenBelanjaEditDto {
     private String spek;
     private BigDecimal komponenHarga;
     private String satuan;
+    private Integer nonPajak;
     private Integer pajak;
     private Integer volume;
     private String koefisien;

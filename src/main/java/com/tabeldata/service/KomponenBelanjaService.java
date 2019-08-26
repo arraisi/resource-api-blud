@@ -130,6 +130,7 @@ public class KomponenBelanjaService {
         komponenGet.setSatuan3(komponenEdit.getSatuan3());
         komponenGet.setVolume4(komponenEdit.getVolume4());
         komponenGet.setSatuan4(komponenEdit.getSatuan4());
+        komponenGet.setPajak(komponenEdit.getPajak());
         komponenGet.setEntryAnggaranRinci(komponenEdit.getKeterangan());
 
         dao.update(komponenGet);
