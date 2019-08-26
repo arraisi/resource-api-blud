@@ -29,6 +29,7 @@ public class PendapatanDptService {
     /**
      * Method untuk save data Pendapatan
      */
+    @Transactional
     public PendapatanDptEntity savePendapatan(LoadDptEntity loadDptEntity, Principal principal) throws EmptyResultDataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
         Integer idPendapatanDpt = rbaNoMaxDao.getIdFromNoMax("TMRBADPT");
@@ -45,6 +46,7 @@ public class PendapatanDptService {
     /**
      * Method untuk updateAnggaran Pendapatan from Rincian Pendapatan
      */
+    @Transactional
     public PendapatanDptEntity updateAnggaranPendapatanFromRincian(PendapatanDptEntity value, Principal principal) {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
         value.setIdUbahPengguna(penggunaLogin.getId());
@@ -57,6 +59,7 @@ public class PendapatanDptService {
     /**
      * Method untuk updateAnggaran Semua Pendapatan By AKB
      */
+    @Transactional
     public PendapatanDptEntity updateAkbPendapatan(PendapatanDptEntity pendapatan, Principal principal) {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
         PendapatanDptEntity value = pendapatanAkbMapperLocal(pendapatan);

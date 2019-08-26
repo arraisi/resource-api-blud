@@ -1,5 +1,6 @@
 package com.tabeldata.dao;
 
+import com.tabeldata.dto.DataPenggunaLogin;
 import com.tabeldata.dto.KegiatanGetDto;
 import com.tabeldata.dto.LoadKegiatanDatatableDto;
 import com.tabeldata.entity.KegiatanEntity;
@@ -12,11 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -279,5 +283,54 @@ public class KegiatanDao {
             value.setUrusan(urusanService.getUrusanById(programEntity.getIdUrusan()));
             return value;
         });
+    }
+
+    public void saveTmrba(Integer id, Integer idSkpd, String tahunAnggaran, DataPenggunaLogin pengguna, Integer idPenggunaRekam, Timestamp tanggalPenggunaRekam) throws DataAccessException {
+        String sql = "insert into TMRBA (I_ID,\n" +
+                "                   I_IDSKPD,\n" +
+                "                   C_ANGG_TAHUN,\n" +
+                "                   C_STATUS,\n" +
+                "                   I_NRK_PA,\n" +
+                "                   I_NIP_PA,\n" +
+                "                   N_PA,\n" +
+                "                   N_PANGKAT_PA,\n" +
+                "                   I_PGUN_REKAM,\n" +
+                "                   D_PGUN_REKAM)\n" +
+                "values (:id,\n" +
+                "        :idSkpd,\n" +
+                "        :tahunAnggaran,\n" +
+                "        :status,\n" +
+                "        :nrkPa,\n" +
+                "        :nipPa,\n" +
+                "        :namaPa,\n" +
+                "        :pangkatPa,\n" +
+                "        :idPenggunaUbah,\n" +
+                "        :tanggalPenggunaRekam)";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("idSkpd", idSkpd);
+        params.put("tahunAnggaran", tahunAnggaran);
+        params.put("status", 0);
+        params.put("nrkPa", pengguna.getNrk());
+        params.put("nipPa", pengguna.getNip());
+        params.put("namaPa", pengguna.getNama());
+        params.put("pangkatPa", pengguna.getJabatan());
+        params.put("idPenggunaUbah", idPenggunaRekam);
+        params.put("tanggalPenggunaRekam", tanggalPenggunaRekam);
+        this.namedParameterJdbcTemplate.update(sql, params);
+    }
+
+    public Integer getTmrbaByIdSkpdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) throws DataAccessException {
+        String query = "select I_ID AS id from TMRBA WHERE I_IDSKPD = :vSkpdID AND C_ANGG_TAHUN = :vTahunAnggaran";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("vSkpdID", idSkpd);
+        parameterSource.addValue("vTahunAnggaran", tahunAnggaran);
+        return namedParameterJdbcTemplate.query(query, parameterSource, resultSet -> {
+            Integer id = resultSet.getInt("id");
+            return id >= 0 ? id : 0;
+        });
+
+
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class KegiatanService {
 
     @Autowired
@@ -56,12 +58,15 @@ public class KegiatanService {
     /**
      * Save Kegiatan
      */
+    @Transactional
     public KegiatanGetDto saveKegiatan(KegiatanEntity value, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         Integer idKegiatan = rbaNoMaxDao.getIdFromNoMax("TMRBAKEGIATAN"); // get ID from TRRBANOMAX by nama Table "TMRBAKEGIATAN"
         value.setId(idKegiatan);
         value.setIdPenggunaRekam(penggunaLogin.getId());
         value.setTanggalPenggunaRekam(new Timestamp(System.currentTimeMillis()));
+        value.setIdSkpd(penggunaLogin.getIdSkpd());
+        log.info("KEGIATAN DATA: {}", value);
         dao.saveKegiatan(value);
         rbaNoMaxDao.updateIdNoMax(idKegiatan, "TMRBAKEGIATAN");
         KegiatanGetDto kegiatanEntity = dao.getKegiatanByID(idKegiatan);
@@ -71,10 +76,12 @@ public class KegiatanService {
     /**
      * Update Kegiatan
      */
+    @Transactional
     public KegiatanGetDto updateKegiatan(KegiatanEntity value, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         value.setIdPenggunaUbah(penggunaLogin.getId());
         value.setTanggalPenggunaUbah(new Timestamp(System.currentTimeMillis()));
+        value.setIdSkpd(penggunaLogin.getIdSkpd());
         dao.updateKegiatan(value);
         KegiatanGetDto kegiatanEntity = dao.getKegiatanByID(value.getId());
         return kegiatanEntity;

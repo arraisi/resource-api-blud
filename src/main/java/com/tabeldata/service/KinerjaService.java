@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class KinerjaService {
 
     @Autowired
@@ -35,6 +37,7 @@ public class KinerjaService {
     /**
      * Save kinerja
      */
+    @Transactional
     public List<LoadKinerjaDto> saveKinerja(KinerjaSaveDto data, String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         Integer idKinerja = rbaNoMaxDao.getIdFromNoMax("TMRBAKEGIATANKINERJA"); // get ID from TRRBANOMAX by nama Table "TMRBAKEGIATANKINERJA"
@@ -65,6 +68,7 @@ public class KinerjaService {
     /**
      * Update kinerja
      */
+    @Transactional
     public List<LoadKinerjaDto> updateKinerja(KinerjaSaveDto data, String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         data.setIdPenggunaUbah(penggunaLogin.getId());
@@ -82,6 +86,7 @@ public class KinerjaService {
         return loadKinerjaDtoList;
     }
 
+    @Transactional
     public List<LoadKinerjaDto> deleteKinerja(String tahunAnggaran, Integer idKegiatan, Integer idSkpd, Integer idKinerja) throws DataAccessException {
         dao.deleteKinerja(tahunAnggaran, idKegiatan, idSkpd, idKinerja);
         List<KinerjaSaveDto> kinerjaKegiatanList = dao.getKinerjaByIdKegiatanSkpdTahun(tahunAnggaran, idKegiatan, idSkpd);

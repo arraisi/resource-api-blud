@@ -18,5 +18,5 @@ public class DataPenggunaLogin {
     private String nip;
     private String nama;
     private String jabatan;
-    private String idSkpd;
+    private Integer idSkpd;
 }

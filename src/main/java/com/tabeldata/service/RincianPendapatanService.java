@@ -8,6 +8,7 @@ import com.tabeldata.entity.RincianPendapatanEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class RincianPendapatanService {
 
     @Autowired
@@ -82,6 +84,7 @@ public class RincianPendapatanService {
     /**
      * Method Untuk Save Ataupun Update Rincian Pendapatan Berdasarkan ID == null (Save) Atau ID != null (Update)
      */
+    @Transactional
     public List<RincianPendapatanEntity> savOnly(List<RincianPendapatanEntity> listRincian, Integer idPendapatan, Principal principal) {
         PendapatanDptEntity pendapatan = pendapatanDptService.getPendapatanById(idPendapatan);
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
@@ -137,6 +140,7 @@ public class RincianPendapatanService {
         return value;
     }
 
+    @Transactional
     public Integer deleteRincianPendapatan (Integer idDpt, Integer idRincian) {
         return dao.deleteRincianPendapatanById(idDpt, idRincian);
     }

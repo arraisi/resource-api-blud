@@ -115,6 +115,7 @@ public class KomponenBelanjaService {
         return dao.getKomponenEditById(id);
     }
 
+    @Transactional
     public void editVolume(KomponenBelanjaEditDto komponenEdit, String tipeKomponen) {
 
         KomponenBelanjaGetDto komponenGet = dao.getKomponenGetById(komponenEdit.getId());
@@ -143,6 +144,7 @@ public class KomponenBelanjaService {
         return dao.getKomponenGetById(id);
     }
 
+    @Transactional
     public int updateRpaKomponen(KomponenBelanjaGetDto data, Principal principal) throws DataAccessException {
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
         return dao.updateRinci(data, penggunaLogin.getId(), new Timestamp(System.currentTimeMillis()));
