@@ -25,10 +25,12 @@ public class BelanjaLangsungService {
     @Autowired
     DataPenggunaLoginService dataPenggunaLoginService;
 
+    @Transactional
     public void save(BelanjaLangsungEntity belanjaLangsungEntity) {
         dao.saveBelanjaLangsung(belanjaLangsungEntity);
     }
 
+    @Transactional
     public void saveByParam(Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen, Principal principal) {
 
         DataPenggunaLogin penggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName()); // Get Id Pengguna By Principal
@@ -77,6 +79,7 @@ public class BelanjaLangsungService {
         dao.saveBelanjaLangsung(belanjaLangsung);
     }
 
+    @Transactional
     public void updateAnggaran(Integer id, Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
         dao.updateAnggaran(id, idKegiatan, tahunAnggaran, idSkpd, tipeKomponen);
     }
