@@ -22,10 +22,11 @@ public class LoginDao {
 
     public List<String> getTahunAnggaranByNrk(String nrk) {
 
-        String query = "SELECT DISTINCT TO_NUMBER(C_ANGG_TAHUN) AS TahunAngg\n" +
-                "FROM TMRBA\n" +
-                "WHERE I_NRK_PKBLJ = :nrk OR I_NRK_PA = :nrk\n" +
-                "order by TahunAngg ASC";
+        String query = "SELECT DISTINCT TO_NUMBER(t.C_ANGG_TAHUN) AS TahunAngg\n" +
+                "FROM TRRBAPENGGUNA pengguna\n" +
+                "         JOIN TMRBA t on pengguna.I_IDSKPD = t.I_IDSKPD\n" +
+                "WHERE pengguna.I_PEG_NRK = :nrk\n" +
+                "ORDER BY TahunAngg ASC";
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
         parameterSource.addValue("nrk", nrk);

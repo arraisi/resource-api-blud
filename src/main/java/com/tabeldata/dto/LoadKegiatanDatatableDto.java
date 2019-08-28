@@ -26,4 +26,8 @@ public class LoadKegiatanDatatableDto {
     private String namaKegiatan;
     private BigDecimal anggaranDpa;
     private BigDecimal anggaranTapd;
+    private String statusPersetujuan;
+    private String statusName;
+    private String statusBadgeColor;
+    private String catatanPersetujuan;
 }

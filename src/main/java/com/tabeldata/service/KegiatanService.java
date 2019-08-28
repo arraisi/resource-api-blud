@@ -14,9 +14,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -31,6 +35,12 @@ public class KegiatanService {
 
     @Autowired
     private DataPenggunaLoginService dataPenggunaLoginService;
+
+    @Autowired
+    private KasService kasService;
+
+    @Autowired
+    private PendapatanDptService pendapatanDptService;
 
     public List<LoadKegiatanDatatableDto> loadKegiatanDatatable(String tahunAnggaran, Integer idSkpd) {
         List<LoadKegiatanDatatableDto> data = dao.loadKegiatanDatatable(tahunAnggaran, idSkpd);
@@ -91,4 +101,34 @@ public class KegiatanService {
         KegiatanGetDto kegiatan = dao.getKegiatanByID(idKegiatan);
         return kegiatan;
     }
+
+    /**
+     * Get Total Anggaran Kegiatan By Id Skpd dan Tahun Anggaran
+     */
+    public BigDecimal getTotalAnggaranBySkpdIdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) {
+        return dao.getTotalAnggaranBySkpdIdDanTahunAnggaran(idSkpd, tahunAnggaran);
+    }
+
+    public Map<String, Object> verifikasiAnggaranSubmitOperator(Integer idSkpd, String tahunAnggaran) throws SQLException {
+        Map<String, Object> value = new HashMap<>();
+
+        BigDecimal totalAnggKas = kasService.totalKasAuditedByIdSkpdDanTahunAnggaran(idSkpd, tahunAnggaran);
+        log.info("totalKas: {}", totalAnggKas);
+        BigDecimal totalAnggPendapatan = pendapatanDptService.getTotalAnggaranPendapatanBySkpdIdDanTahunAnggaran(idSkpd, tahunAnggaran);
+        log.info("totalAnggPendapatan: {}", totalAnggPendapatan);
+        BigDecimal totalAnggKegiatan = dao.getTotalAnggaranBySkpdIdDanTahunAnggaran(idSkpd, tahunAnggaran);
+        log.info("totalAnggKegiatan: {}", totalAnggKegiatan);
+        BigDecimal totalKasPendapatan = totalAnggKas.add(totalAnggPendapatan);
+        log.info("totalKasPendapatan: {}", totalKasPendapatan);
+        BigDecimal sisaAngg = totalKasPendapatan.subtract(totalAnggKegiatan);
+        log.info("sisaAngg: {}", sisaAngg);
+
+        value.put("totalKas", totalAnggKas);
+        value.put("totalAnggPendapatan", totalAnggPendapatan);
+        value.put("totalAnggaranKegiatan", totalAnggKegiatan);
+        value.put("totalKasPendapatan", totalKasPendapatan);
+        value.put("sisa", sisaAngg);
+        return value;
+    }
+
 }

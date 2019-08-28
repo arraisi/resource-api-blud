@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +99,17 @@ public class KegiatanController {
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity<>(new KegiatanGetDto(), HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/verifikasi/anggaran")
+    public ResponseEntity<?> verifikasiAnggaranSubmitOperator(@RequestParam Integer idSkpd, @RequestParam String tahunAnggaran) {
+        try {
+            Map<String, Object> value = service.verifikasiAnggaranSubmitOperator(idSkpd, tahunAnggaran);
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

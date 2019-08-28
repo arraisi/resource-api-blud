@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -235,6 +237,27 @@ public class PendapatanDptDao {
                         rs.getTimestamp("tanggalUbahPengguna"),
                         rs.getString("jenis")
                 );
+            }
+        });
+    }
+
+    /**
+     * Get Total Anggaran Pendapatan By ID SKPD dan Tahun Anggaran
+     */
+    public BigDecimal getTotalAnggaranPendapatanBySkpdIdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) {
+        String sql = "select SUM(pen.V_ANGG_TAPD) AS totalPendapatan\n" +
+                "from TMRBADPT pen\n" +
+                "where I_IDSKPD = :vIdSkpd\n" +
+                "  and C_ANGG_TAHUN = :vTahun";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("vIdSkpd", idSkpd);
+        parameterSource.addValue("vTahun", tahunAnggaran);
+
+        return this.namedParameterJdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BigDecimal>() {
+            @Override
+            public BigDecimal mapRow(ResultSet resultSet, int i) throws SQLException {
+                BigDecimal total = resultSet.getBigDecimal("totalPendapatan");
+                return total == null ? BigDecimal.valueOf(0) : total;
             }
         });
     }

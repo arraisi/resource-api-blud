@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -57,6 +58,8 @@ public class KegiatanDao {
                 "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
                 "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
                 "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
+                "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
+                "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
                 "FROM tmrba\n" +
                 "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
                 "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
@@ -86,6 +89,10 @@ public class KegiatanDao {
             data.setNamaKegiatan(rs.getString("namaKegiatan"));
             data.setAnggaranDpa(rs.getBigDecimal("anggaranDpa"));
             data.setAnggaranTapd(rs.getBigDecimal("anggaranTapd"));
+            data.setStatusPersetujuan(rs.getString("statusPersetujuan"));
+            data.setStatusName(mapperStatusAppv(rs.getString("statusPersetujuan")));
+            data.setStatusBadgeColor(mapperStatusAppvColorBadge(rs.getString("statusPersetujuan")));
+            data.setCatatanPersetujuan(rs.getString("catatanPersetujuan"));
             return data;
         });
     }
@@ -330,7 +337,75 @@ public class KegiatanDao {
             Integer id = resultSet.getInt("id");
             return id >= 0 ? id : 0;
         });
+    }
 
+    /**
+     * Get Total Anggaran Kegiatan By Id Skpd dan Tahun Anggaran
+     */
+    public BigDecimal getTotalAnggaranBySkpdIdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) {
+        String sql = "select SUM(V_ANGG_TAPD) AS totalAnggKegiatan\n" +
+                "from TMRBAKEGIATAN\n" +
+                "where I_IDSKPD = :vIdSkpd\n" +
+                "  and C_ANGG_TAHUN = :vTahun";
 
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("vIdSkpd", idSkpd);
+        parameterSource.addValue("vTahun", tahunAnggaran);
+
+        return this.namedParameterJdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BigDecimal>() {
+            @Override
+            public BigDecimal mapRow(ResultSet resultSet, int i) throws SQLException {
+                BigDecimal total = resultSet.getBigDecimal("totalAnggKegiatan");
+                return total == null ? BigDecimal.valueOf(0) : total;
+            }
+        });
+    }
+
+    public String mapperStatusAppv(String id) {
+        String status;
+        switch (id) {
+            case "0":
+                status = "Baru";
+                break;
+            case "1":
+                status = "Dikirim";
+                break;
+            case "2":
+                status = "Diterima";
+                break;
+            case "3":
+                status = "Ditolak";
+                break;
+            case "4":
+                status = "Revisi";
+                break;
+            default:
+                status = "Baru";
+        }
+        return status;
+    }
+
+    public String mapperStatusAppvColorBadge(String id) {
+        String statusColor;
+        switch (id) {
+            case "0":
+                statusColor = "badge-secondary";
+                break;
+            case "1":
+                statusColor = "badge-green";
+                break;
+            case "2":
+                statusColor = "badge-blue";
+                break;
+            case "3":
+                statusColor = "badge-red";
+                break;
+            case "4":
+                statusColor = "badge-yellow";
+                break;
+            default:
+                statusColor = "badge-green";
+        }
+        return statusColor;
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,14 +61,14 @@ public class KasDao {
                         "ORDER BY \n" +
                         "\ttmrba.c_angg_tahun,  trrbaskpd.c_skpd, C_AKUN";
 
-                        Map<String, Object> param = new HashMap<>();
-                        param.put("vtahun", tahunAnggaran);
-                        param.put("vidskpd", skpdId);
+        Map<String, Object> param = new HashMap<>();
+        param.put("vtahun", tahunAnggaran);
+        param.put("vidskpd", skpdId);
 
 
         log.info("{}", baseQuery);
 
-        return jdbcTemplate.query(baseQuery,param, new RowMapper<TmrKasEntity>() {
+        return jdbcTemplate.query(baseQuery, param, new RowMapper<TmrKasEntity>() {
             @Override
             public TmrKasEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TmrKasEntity tmrKasEntity = new TmrKasEntity();
@@ -87,10 +88,10 @@ public class KasDao {
     }
 
     public void save(List<TmrKasEntity> value) {
-        System.out.println("LIST DATA KAS "+value);
+        System.out.println("LIST DATA KAS " + value);
 
-        for (TmrKasEntity val: value) {
-            if(val.getIdTmrbakasBlud() == -1){
+        for (TmrKasEntity val : value) {
+            if (val.getIdTmrbakasBlud() == -1) {
                 String insertQuery = "INSERT INTO TMRBAKASBLUD " +
                         "(I_ID," +
                         "I_IDSKPD," +
@@ -118,7 +119,7 @@ public class KasDao {
                 });
 
                 Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("iId",getI_ID);
+                paramMap.put("iId", getI_ID);
                 paramMap.put("iIdSkpd", val.getIidSkpd());
                 paramMap.put("cAnggTahun", val.getCanggTahun());
                 paramMap.put("iIdBas", val.getIid());
@@ -126,11 +127,11 @@ public class KasDao {
                 paramMap.put("vkasAudited", val.getVkasAudited());
 //                paramMap.put("dPgunRekam", Date.valueOf(LocalDate.now()));
 
-                this.jdbcTemplate.update(insertQuery,paramMap);
+                this.jdbcTemplate.update(insertQuery, paramMap);
                 TrrbaNoMax trrbaNoMax = new TrrbaNoMax();
                 String queryBuilder = "UPDATE TRRBANOMAX\n" +
-                "SET I_IDMAX = :iIdMax\n" +
-                "WHERE N_TABEL = :nTabel";
+                        "SET I_IDMAX = :iIdMax\n" +
+                        "WHERE N_TABEL = :nTabel";
 
                 Map<String, Object> updateId = new HashMap<>();
 
@@ -150,8 +151,27 @@ public class KasDao {
                 "WHERE I_IDSKPD = :iidSkpd AND I_IDBAS =:iid ";
 
 
-
-
         this.jdbcTemplate.batchUpdate(queryBuilder, sqlParameterSources);
+    }
+
+    /**
+     * Get Total KAS By ID SKPD dan Tahun Anggaran
+     */
+    public BigDecimal totalKasAuditedByIdSkpdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) {
+        String sql = "select SUM(kas.V_KAS_AUDITED) AS totalKas\n" +
+                "from TMRBAKASBLUD kas\n" +
+                "where I_IDSKPD = :vIdSkpd\n" +
+                "  and C_ANGG_TAHUN = :vTahunAnggaran";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("vIdSkpd", idSkpd);
+        parameterSource.addValue("vTahunAnggaran", tahunAnggaran);
+
+        return this.jdbcTemplate.queryForObject(sql, parameterSource, new RowMapper<BigDecimal>() {
+            @Override
+            public BigDecimal mapRow(ResultSet resultSet, int i) throws SQLException {
+                BigDecimal total = resultSet.getBigDecimal("totalKas");
+                return total == null ? BigDecimal.valueOf(0) : total;
+            }
+        });
     }
 }

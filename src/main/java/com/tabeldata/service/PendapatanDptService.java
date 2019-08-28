@@ -10,7 +10,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 @Service
@@ -113,5 +115,12 @@ public class PendapatanDptService {
         value.setRpaBulan11(p.getRpaBulan11());
         value.setRpaBulan12(p.getRpaBulan12());
         return value;
+    }
+
+    /**
+     * Get Total Anggaran Pendapatan By ID SKPD dan Tahun Anggaran
+     */
+    public BigDecimal getTotalAnggaranPendapatanBySkpdIdDanTahunAnggaran(Integer idSkpd, String tahunAnggaran) throws SQLException {
+        return dao.getTotalAnggaranPendapatanBySkpdIdDanTahunAnggaran(idSkpd, tahunAnggaran);
     }
 }
