@@ -50,8 +50,11 @@ public class KegiatanController {
      * API Untuk Load Kegiatan Untuk Pertama di Menu Kegiatan Table
      */
     @GetMapping("/load/{tahunAnggaran}/{idSkpd}")
-    public ResponseEntity<List<LoadKegiatanDatatableDto>> loadKegiatanDatatable(@PathVariable String tahunAnggaran, @PathVariable Integer idSkpd) {
-        List<LoadKegiatanDatatableDto> data = service.loadKegiatanDatatable(tahunAnggaran, idSkpd);
+    public ResponseEntity<List<LoadKegiatanDatatableDto>> loadKegiatanDatatable(
+            @PathVariable String tahunAnggaran,
+            @PathVariable Integer idSkpd,
+            Principal principal) {
+        List<LoadKegiatanDatatableDto> data = service.loadKegiatanDatatable(tahunAnggaran, idSkpd, principal);
         if (!data.isEmpty()) {
             return new ResponseEntity<>(data, HttpStatus.OK);
         } else {

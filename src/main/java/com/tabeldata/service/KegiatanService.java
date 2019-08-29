@@ -42,8 +42,9 @@ public class KegiatanService {
     @Autowired
     private PendapatanDptService pendapatanDptService;
 
-    public List<LoadKegiatanDatatableDto> loadKegiatanDatatable(String tahunAnggaran, Integer idSkpd) {
-        List<LoadKegiatanDatatableDto> data = dao.loadKegiatanDatatable(tahunAnggaran, idSkpd);
+    public List<LoadKegiatanDatatableDto> loadKegiatanDatatable(String tahunAnggaran, Integer idSkpd, Principal principal) {
+        DataPenggunaLogin dataPenggunaLogin = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
+        List<LoadKegiatanDatatableDto> data = dao.loadKegiatanDatatable(tahunAnggaran, idSkpd, dataPenggunaLogin.getOtor());
         return data;
     }
 

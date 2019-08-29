@@ -38,8 +38,21 @@ public class LoginDao {
                 return resultSet.getString("TahunAngg");
             }
         });
+    }
 
+    public List<String> getTahunAnggaranDinas() {
 
+        String query = "SELECT DISTINCT TO_NUMBER(t.C_ANGG_TAHUN) AS TahunAngg\n" +
+                "FROM TMRBA t\n" +
+                "ORDER BY TahunAngg ASC";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        return jdbcTemplate.query(query, parameterSource, new RowMapper<String>() {
+            @Override
+            public String mapRow(ResultSet resultSet, int i) throws SQLException {
+                log.info("Data : {}", resultSet.getString("TahunAngg"));
+                return resultSet.getString("TahunAngg");
+            }
+        });
     }
 
 

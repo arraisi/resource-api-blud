@@ -1,6 +1,7 @@
 package com.tabeldata.service;
 
 import com.tabeldata.dao.LoginDao;
+import com.tabeldata.dto.DataPenggunaLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,13 +19,22 @@ public class LoginService {
     @Autowired
     private LoginDao dao;
 
+    @Autowired
+    private DataPenggunaLoginService dataPenggunaLoginService;
+
     Calendar now = Calendar.getInstance();
     int year = now.get(Calendar.YEAR);
     String yearInString = String.valueOf(year + 1);
 
     public List<String> getTahunAnggaranByNrk(String nrk) throws SQLException {
+        List<String> listTahunAnggaran;
+        DataPenggunaLogin pengguna = dataPenggunaLoginService.getDataPenggunaLogin(nrk);
+        if (pengguna.getOtor().equals("3")) {
+            listTahunAnggaran = dao.getTahunAnggaranDinas();
+        } else {
+            listTahunAnggaran = dao.getTahunAnggaranByNrk(nrk);
+        }
 
-        List<String> listTahunAnggaran = dao.getTahunAnggaranByNrk(nrk);
         if (listTahunAnggaran.isEmpty()) {
             return listTahunAnggaran;
         }

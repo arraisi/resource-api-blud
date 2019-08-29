@@ -41,33 +41,137 @@ public class KegiatanDao {
     /**
      * Load Kegiatan List Table Awal
      */
-    public List<LoadKegiatanDatatableDto> loadKegiatanDatatable(String tahunAnggaran, Integer idSkpd) {
 
-        String sql = "SELECT NVL(xxx.i_id, -1)        AS idKegiatan\n" +
-                "     , tmrba.c_angg_tahun       AS tahunAnggaran\n" +
-                "     , tmrba.i_idskpd           AS idSkpd\n" +
-                "     , trrbaskpd.c_skpd         AS kodeSkpd\n" +
-                "     , trrbaskpd.n_skpd         AS namaSkpd\n" +
-                "     , trprogram.i_idurusan     AS idUrusan\n" +
-                "     , c_urusan                 AS kodeUrusan\n" +
-                "     , n_urusan                 AS namaUrusan\n" +
-                "     , xxx.i_idprogram          AS idProgram\n" +
-                "     , c_program                AS kodeProgram\n" +
-                "     , n_program                AS namaProgram\n" +
-                "     , NVL(xxx.c_kegiatan, '-') AS kodeKegiatan\n" +
-                "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
-                "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
-                "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
-                "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
-                "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
-                "FROM tmrba\n" +
-                "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
-                "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
-                "         LEFT JOIN trprogram ON trprogram.i_id = xxx.i_idprogram\n" +
-                "         LEFT JOIN trurusan ON trurusan.i_id = trprogram.i_idurusan\n" +
-                "WHERE tmrba.c_angg_tahun = :vTahunAnggaran\n" +
-                "  and tmrba.I_idskpd = :vIdSkpd\n" +
-                "ORDER BY tmrba.i_idskpd, xxx.c_kegiatan ";
+    String QUERY_LOAD_KEG_OPPR = "SELECT NVL(xxx.i_id, -1)        AS idKegiatan\n" +
+            "     , tmrba.c_angg_tahun       AS tahunAnggaran\n" +
+            "     , tmrba.i_idskpd           AS idSkpd\n" +
+            "     , trrbaskpd.c_skpd         AS kodeSkpd\n" +
+            "     , trrbaskpd.n_skpd         AS namaSkpd\n" +
+            "     , trprogram.i_idurusan     AS idUrusan\n" +
+            "     , c_urusan                 AS kodeUrusan\n" +
+            "     , n_urusan                 AS namaUrusan\n" +
+            "     , xxx.i_idprogram          AS idProgram\n" +
+            "     , c_program                AS kodeProgram\n" +
+            "     , n_program                AS namaProgram\n" +
+            "     , NVL(xxx.c_kegiatan, '-') AS kodeKegiatan\n" +
+            "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
+            "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
+            "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
+            "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
+            "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
+            "FROM tmrba\n" +
+            "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
+            "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
+            "         LEFT JOIN trprogram ON trprogram.i_id = xxx.i_idprogram\n" +
+            "         LEFT JOIN trurusan ON trurusan.i_id = trprogram.i_idurusan\n" +
+            "WHERE tmrba.c_angg_tahun = :vTahunAnggaran\n" +
+            "  and tmrba.I_idskpd = :vIdSkpd\n" +
+            "ORDER BY tmrba.i_idskpd, xxx.c_kegiatan";
+
+    String QUERY_LOAD_KEG_BENDAHARA = "SELECT NVL(xxx.i_id, -1)        AS idKegiatan\n" +
+            "     , tmrba.c_angg_tahun       AS tahunAnggaran\n" +
+            "     , tmrba.i_idskpd           AS idSkpd\n" +
+            "     , trrbaskpd.c_skpd         AS kodeSkpd\n" +
+            "     , trrbaskpd.n_skpd         AS namaSkpd\n" +
+            "     , trprogram.i_idurusan     AS idUrusan\n" +
+            "     , c_urusan                 AS kodeUrusan\n" +
+            "     , n_urusan                 AS namaUrusan\n" +
+            "     , xxx.i_idprogram          AS idProgram\n" +
+            "     , c_program                AS kodeProgram\n" +
+            "     , n_program                AS namaProgram\n" +
+            "     , NVL(xxx.c_kegiatan, '-') AS kodeKegiatan\n" +
+            "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
+            "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
+            "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
+            "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
+            "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
+            "FROM tmrba\n" +
+            "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
+            "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
+            "         LEFT JOIN trprogram ON trprogram.i_id = xxx.i_idprogram\n" +
+            "         LEFT JOIN trurusan ON trurusan.i_id = trprogram.i_idurusan\n" +
+            "WHERE tmrba.c_angg_tahun = :vTahunAnggaran\n" +
+            "  and tmrba.I_idskpd = :vIdSkpd\n" +
+            "  and tmrba.I_OPR_APPRV is not null\n" +
+            "ORDER BY tmrba.i_idskpd, xxx.c_kegiatan";
+
+    String QUERY_LOAD_KEG_KEPALA = "SELECT NVL(xxx.i_id, -1)        AS idKegiatan\n" +
+            "     , tmrba.c_angg_tahun       AS tahunAnggaran\n" +
+            "     , tmrba.i_idskpd           AS idSkpd\n" +
+            "     , trrbaskpd.c_skpd         AS kodeSkpd\n" +
+            "     , trrbaskpd.n_skpd         AS namaSkpd\n" +
+            "     , trprogram.i_idurusan     AS idUrusan\n" +
+            "     , c_urusan                 AS kodeUrusan\n" +
+            "     , n_urusan                 AS namaUrusan\n" +
+            "     , xxx.i_idprogram          AS idProgram\n" +
+            "     , c_program                AS kodeProgram\n" +
+            "     , n_program                AS namaProgram\n" +
+            "     , NVL(xxx.c_kegiatan, '-') AS kodeKegiatan\n" +
+            "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
+            "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
+            "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
+            "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
+            "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
+            "FROM tmrba\n" +
+            "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
+            "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
+            "         LEFT JOIN trprogram ON trprogram.i_id = xxx.i_idprogram\n" +
+            "         LEFT JOIN trurusan ON trurusan.i_id = trprogram.i_idurusan\n" +
+            "WHERE tmrba.c_angg_tahun = :vTahunAnggaran\n" +
+            "  and tmrba.I_idskpd = :vIdSkpd\n" +
+            "  and tmrba.I_PJBKEU_APPV is not null\n" +
+            "ORDER BY tmrba.i_idskpd, xxx.c_kegiatan";
+
+    String QUERY_LOAD_KEG_DINAS = "SELECT NVL(xxx.i_id, -1)        AS idKegiatan\n" +
+            "     , tmrba.c_angg_tahun       AS tahunAnggaran\n" +
+            "     , tmrba.i_idskpd           AS idSkpd\n" +
+            "     , trrbaskpd.c_skpd         AS kodeSkpd\n" +
+            "     , trrbaskpd.n_skpd         AS namaSkpd\n" +
+            "     , trprogram.i_idurusan     AS idUrusan\n" +
+            "     , c_urusan                 AS kodeUrusan\n" +
+            "     , n_urusan                 AS namaUrusan\n" +
+            "     , xxx.i_idprogram          AS idProgram\n" +
+            "     , c_program                AS kodeProgram\n" +
+            "     , n_program                AS namaProgram\n" +
+            "     , NVL(xxx.c_kegiatan, '-') AS kodeKegiatan\n" +
+            "     , NVL(xxx.n_kegiatan, '-') AS namaKegiatan\n" +
+            "     , NVL(xxx.v_angg_dpa, 0)   AS anggaranDpa\n" +
+            "     , NVL(xxx.v_angg_tapd, 0)  AS anggaranTapd\n" +
+            "     , xxx.C_STATUS_APPV        AS statusPersetujuan\n" +
+            "     , xxx.E_CATATAN_APPV       AS catatanPersetujuan\n" +
+            "FROM tmrba\n" +
+            "         INNER JOIN trrbaskpd ON (tmrba.i_idskpd = trrbaskpd.i_id)\n" +
+            "         LEFT JOIN tmrbakegiatan xxx ON (tmrba.c_angg_tahun = xxx.c_angg_tahun) AND (tmrba.i_idskpd = xxx.i_idskpd)\n" +
+            "         LEFT JOIN trprogram ON trprogram.i_id = xxx.i_idprogram\n" +
+            "         LEFT JOIN trurusan ON trurusan.i_id = trprogram.i_idurusan\n" +
+            "WHERE tmrba.c_angg_tahun = :vTahunAnggaran\n" +
+            "  and tmrba.I_idskpd = :vIdSkpd\n" +
+            "  and tmrba.I_PA_APPV is not null\n" +
+            "ORDER BY tmrba.i_idskpd, xxx.c_kegiatan";
+
+    public List<LoadKegiatanDatatableDto> loadKegiatanDatatable(String tahunAnggaran, Integer idSkpd, String otor) {
+
+        String sql;
+        switch (otor) {
+            case "0":
+                // OPERATOR Query
+                sql = QUERY_LOAD_KEG_OPPR;
+                break;
+            case "1":
+                // Bendahara Query
+                sql = QUERY_LOAD_KEG_BENDAHARA;
+                break;
+            case "2":
+                // KEPALA SKPD Query
+                sql = QUERY_LOAD_KEG_KEPALA;
+                break;
+            case "3":
+                // DINAS TEKNIS Query
+                sql = QUERY_LOAD_KEG_DINAS;
+                break;
+            default:
+                sql = QUERY_LOAD_KEG_OPPR;
+        }
         Map<String, Object> params = new HashedMap<>();
         params.put("vTahunAnggaran", tahunAnggaran);
         params.put("vIdSkpd", idSkpd);
