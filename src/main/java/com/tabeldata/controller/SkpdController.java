@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -32,9 +33,9 @@ public class SkpdController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<SkpdPersetujuanDto>> getListSkpdPersetujuan(@RequestParam String tahunAnggaran) {
+    public ResponseEntity<List<SkpdPersetujuanDto>> getListSkpdPersetujuan(@RequestParam String tahunAnggaran, Principal principal) {
         try {
-            List<SkpdPersetujuanDto> valuSkpdEntity = service.getListSkpdPersetujuan(tahunAnggaran);
+            List<SkpdPersetujuanDto> valuSkpdEntity = service.getListSkpdPersetujuan(tahunAnggaran, principal);
             if (!valuSkpdEntity.isEmpty()) {
                 return new ResponseEntity<>(valuSkpdEntity, HttpStatus.OK);
             }
