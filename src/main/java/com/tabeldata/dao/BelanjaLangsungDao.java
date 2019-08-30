@@ -78,11 +78,11 @@ public class BelanjaLangsungDao {
         String sqlPegawai = "UPDATE " +
                 "   TMRBABL SET\n" +
                 "               V_ANGG_DPABP = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.1%'),\n" +
                 "              V_ANGG_TAPDBP = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.1%')\n" +
                 "WHERE I_ID = :id";
@@ -90,11 +90,11 @@ public class BelanjaLangsungDao {
         String sqlBarang = "UPDATE " +
                 "   TMRBABL SET\n" +
                 "               V_ANGG_DPABBJ = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.2%'),\n" +
                 "              V_ANGG_TAPDBBJ = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.2%') \n" +
                 "WHERE I_ID = :id";
@@ -102,11 +102,11 @@ public class BelanjaLangsungDao {
         String sqlModal = "UPDATE " +
                 "   TMRBABL SET\n" +
                 "               V_ANGG_DPABM = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.3%'),\n" +
                 "              V_ANGG_TAPDBM = (SELECT " +
-                "                                     SUM(RINCI.V_ANGG_DPA) " +
+                "                                     SUM(RINCI.V_ANGG_TAPD) " +
                 "                               FROM TMRBABLRINCI RINCI JOIN TRBAS TRB ON RINCI.I_IDBAS = TRB.I_ID \n" +
                 "                               WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg  AND I_IDSKPD = :idSkpd AND TRB.C_AKUN LIKE '5.2.3%') \n" +
                 "WHERE I_ID = :id";
@@ -200,9 +200,9 @@ public class BelanjaLangsungDao {
     }
 
     public BigDecimal getAnggaranByTipeKomponen(Integer idKegiatan, String tahunAnggaran, Integer idSkpd, String tipeKomponen) {
-        String sqlPegawai = "SELECT V_ANGG_DPABP anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
-        String sqlBarang = "SELECT V_ANGG_DPABBJ anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
-        String sqlModal = "SELECT V_ANGG_DPABM anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
+        String sqlPegawai = "SELECT V_ANGG_TAPDBP anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
+        String sqlBarang = "SELECT V_ANGG_TAPDBBJ anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
+        String sqlModal = "SELECT V_ANGG_TAPDBM anggaran FROM TMRBABL WHERE I_IDKEGIATAN = :idKegiatan AND C_ANGG_TAHUN = :tahunAngg AND I_IDSKPD = :idSkpd";
         String sql = "";
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("idKegiatan", idKegiatan);
