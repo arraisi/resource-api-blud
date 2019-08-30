@@ -56,7 +56,7 @@ public class PersetujuanService {
     @Transactional
     public List<LoadKegiatanDatatableDto> terimaKegiatanBendahara(String tahunAnggaran, Integer kegiatanId, Principal principal) throws SQLException {
         DataPenggunaLogin pengguna = dataPenggunaLoginService.getDataPenggunaLogin(principal.getName());
-        dao.updateKegiatanDiterimaBendahara(pengguna.getIdSkpd(), tahunAnggaran, kegiatanId);
+        dao.updateKegiatanDiterimaBendahara(pengguna.getIdSkpd(), tahunAnggaran, kegiatanId, pengguna.getId(), tanggalSekarang);
         List<LoadKegiatanDatatableDto> data = kegiatanService.loadKegiatanDatatable(tahunAnggaran, pengguna.getIdSkpd(), principal);
         return data;
     }

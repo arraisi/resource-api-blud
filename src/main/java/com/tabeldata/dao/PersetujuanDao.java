@@ -96,9 +96,9 @@ public class PersetujuanDao {
     /**
      * Update TMRBAKEGIATAN Ketika Diterima Oleh Pejabat Bendahara Keuangan
      */
-    public void updateKegiatanDiterimaBendahara(Integer idSkpd, String tahunAnggaran, Integer idKegiatan) throws SQLException {
+    public void updateKegiatanDiterimaBendahara(Integer idSkpd, String tahunAnggaran, Integer idKegiatan, Integer idBendahara, Timestamp tanggal) throws SQLException {
         String query = "update TMRBAKEGIATAN\n" +
-                "set C_STATUS_APPV = '2', E_CATATAN_APPV = '-'\n" +
+                "set C_STATUS_APPV = '2', E_CATATAN_APPV = '-', I_IDPJBKEU_APPV = :vIdBendahara, D_PJBKEU_APPV = :vTanggalAppv\n" +
                 "where I_IDSKPD = :vIdSkpd\n" +
                 "  and C_ANGG_TAHUN = :vTahunAnggaran\n" +
                 "  and I_ID = :vIdKegiatan";
@@ -106,6 +106,8 @@ public class PersetujuanDao {
         parameterSource.addValue("vIdSkpd", idSkpd);
         parameterSource.addValue("vTahunAnggaran", tahunAnggaran);
         parameterSource.addValue("vIdKegiatan", idKegiatan);
+        parameterSource.addValue("vIdBendahara", idBendahara);
+        parameterSource.addValue("vTanggalAppv", tanggal);
         this.namedParameterJdbcTemplate.update(query, parameterSource);
     }
 
